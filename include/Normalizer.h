@@ -29,6 +29,9 @@ public:
   void reverse(Eigen::VectorXf& to_reverse);
   void reverse(Eigen::VectorXf& to_reverse, NormSettings settings);
 
+  void batch_norm(std::vector<Eigen::VectorXf>& to_norm);
+  void batch_reverse(std::vector<Eigen::VectorXf>& to_reverse);
+
   ~Normalizer() {}
 };
 

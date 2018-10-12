@@ -66,3 +66,15 @@ void Normalizer::reverse(Eigen::VectorXf& to_reverse, NormSettings settings)
   _settings = settings;
   reverse(to_reverse);
 }
+
+void Normalizer::batch_norm(std::vector<Eigen::VectorXf>& to_norm)
+{
+  for (auto& item : to_norm)
+    norm(item);
+}
+
+void Normalizer::batch_reverse(std::vector<Eigen::VectorXf>& to_reverse)
+{
+  for (auto& item : to_reverse)
+    reverse(item);
+}
