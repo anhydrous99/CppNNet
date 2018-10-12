@@ -55,8 +55,6 @@ Neural_Layer::Neural_Layer(int nneurons, int ninputs) : _w(nneurons, ninputs), _
     *(_b.data() + i) = dis(gen);
 }
 
-#include <iostream>
-
 Evector Neural_Layer::feedforward(Evector input)
 {
   Evector a;
@@ -64,10 +62,6 @@ Evector Neural_Layer::feedforward(Evector input)
     a = _prev_layer->feedforward(input);
   else
     a = input;
-
-  std::cout << "a:" << a << std::endl;
-  std::cout << "w:" << _w << std::endl;
-  std::cout << "b:" << _b << std::endl;
 
   Evector n = _w * a + _b;
 

@@ -17,7 +17,7 @@ find_package(OpenMP REQUIRED)
 
 include_directories(include)
 
-set(SOURCES src/Neural_Layer.cpp src/main.cpp)
+set(SOURCES src/Normalizer.cpp src/Neural_Layer.cpp src/main.cpp)
 
 add_executable(CppNNet ${SOURCES})
 
