@@ -37,7 +37,7 @@ public:
   Evector feedforward(Evector input);
 
   Ematrix GetWeights() { return _w; }
-  Evector getBiases() { return _b; }
+  Evector GetBiases() { return _b; }
 
   friend class Neural_Trainer;
 };

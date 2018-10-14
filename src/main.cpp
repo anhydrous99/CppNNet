@@ -1,6 +1,9 @@
 #include "Neural_Trainer.h"
 #include "Neural_Layer.h"
+#include "Activation_Functions.h"
 #include "Normalizer.h"
+
+#include "CSV_Importer.h"
 
 #include <iostream>
 #include <cmath>
@@ -26,7 +29,7 @@ int main(void)
     Bias_Layer2 << std::endl;
 
   // Declare Activation Function for 1st layer
-  function activation_function = [](float x){ return 2/(1+exp(-2*x)) - 1; };
+  function activation_function = HyperbolicTan_Function;
 
   // Create Layers
   std::shared_ptr<Neural_Layer> layer1(new Neural_Layer(Weights_Layer1, Bias_Layer1, activation_function));
@@ -55,40 +58,21 @@ int main(void)
   // Print network output
   std::cout << output << std::endl;
 
-  std::cout << "Testing Neural-Trainer - single sample\n";
+  std::cout << "Testing CSV Importer\n";
 
-  // Create new network with randomly initialized weights
-  std::shared_ptr<Neural_Layer> layer11(new Neural_Layer(5,1));
-  std::shared_ptr<Neural_Layer> layer12(new Neural_Layer(1,5, layer11));
+  // Create CSV_Importer and get samples and targets to train
+  CSV_Importer imp("../training_data/simpledata_set.csv", 1, 1);
+  std::vector<Eigen::VectorXf> samples = imp.GetSamples();
+  std::vector<Eigen::VectorXf> targets = imp.GetTargets();
 
-  // Put pointers in vector
-  std::vector<std::shared_ptr<Neural_Layer>> neural_pointers;
-  neural_pointers.push_back(layer11);
-  neural_pointers.push_back(layer12);
+  // Print both sample and target vectors to make sure they loaded correctly
+  std::cout << "Printing sample vectors\n";
+  for (int i = 0, size = samples.size(); i < size; i++)
+    std::cout << samples[i] << std::endl;
 
-  // Put derivative of the activation functions in a vector
-  std::vector<function> derv_funcs;
-  derv_funcs.push_back([](float x){ return 1; });
-  derv_funcs.push_back([](float x){ return 1; });
-
-  // Create and initialize sample vector and target vector
-  Evector sample(1);
-  Evector target(1);
-
-  sample << 0.5;
-  target << 0.7;
-
-  std::cout << "Starting Layer 1 Weights \n" << 
-    layer11->GetWeights() << "\nLayer 2 Weights\n" << layer12->GetWeights() << std::endl;
-
-  // Create trainer
-  Neural_Trainer trainer(neural_pointers, derv_funcs, 0.1);
-
-  // Train with single sample
-  trainer.train_sample(sample, target);
-
-  std::cout << "After Single Training Layer 1 Weights \n" << 
-    layer11->GetWeights() << "\nLayer 2 Weights\n" << layer12->GetWeights() << std::endl;
+  std::cout << "Printing target vectors\n";
+  for (int i = 0, size = targets.size(); i < size; i++)
+    std::cout << targets[i] << std::endl;
 
   return 0;
 }
