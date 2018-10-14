@@ -14,6 +14,7 @@ private:
   std::vector<int> shuffle_indices(int nindices);
 public:
   Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, std::vector<function> derv_fun, float learning_rate);
+  Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, std::vector<function> derv_fun, float learning_rate);
   void train_sample(Evector s, Evector t);
 };
 

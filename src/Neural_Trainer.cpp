@@ -19,9 +19,17 @@ std::vector<int> shuffle_indices(int nindices)
   return indices;
 }
 
-Neural_Trainer::Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, std::vector<function> derv_funs, float learning_rate)
+Neural_Trainer::Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, 
+    std::vector<function> derv_funs, float learning_rate)
 {
   _neur_ptrs = neural_ptr;
+  _daf = derv_funs;
+  _learning_rate = learning_rate;
+}
+Neural_Trainer::Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, 
+    std::vector<function> derv_funs, float learning_rate)
+{
+  _neur_ptrs = end_neural_ptr->GetVecPtrs();
   _daf = derv_funs;
   _learning_rate = learning_rate;
 }
