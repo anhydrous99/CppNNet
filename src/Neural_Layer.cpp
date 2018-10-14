@@ -70,10 +70,25 @@ Evector Neural_Layer::feedforward(Evector input)
 
   return n;
 }
+
 std::vector<Evector> Neural_Layer::feedforward_batch(std::vector<Evector> input)
 {
   std::vector<Evector> output;
   for (auto& item: input)
     output.push_back(feedforward(item));
+  return output;
+}
+
+std::vector<std::shared_ptr<Neural_Layer>> Neural_Layer::GetVecPtrs()
+{
+  std::vector<std::shared_ptr<Neural_Layer>> output;
+  std::vector<std::shared_ptr<Neural_Layer>> tmp;
+  if (_prev_layer)
+  {
+    tmp = _prev_layer->GetVecPtrs();
+    output.insert(output.end(), tmp.begin(), tmp.end());
+  }
+  std::shared_ptr<Neural_Layer> this_ptr(this);
+  output.push_back(this_ptr);
   return output;
 }

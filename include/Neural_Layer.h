@@ -38,6 +38,8 @@ public:
   Evector feedforward(Evector input);
   std::vector<Evector> feedforward_batch(std::vector<Evector> input);
 
+  std::vector<Neural_Ptr> GetVecPtrs();
+
   Ematrix GetWeights() { return _w; }
   Evector GetBiases() { return _b; }
 
