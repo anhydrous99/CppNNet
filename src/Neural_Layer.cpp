@@ -70,3 +70,10 @@ Evector Neural_Layer::feedforward(Evector input)
 
   return n;
 }
+std::vector<Evector> Neural_Layer::feedforward_batch(std::vector<Evector> input)
+{
+  std::vector<Evector> output;
+  for (auto& item: input)
+    output.push_back(feedforward(item));
+  return output;
+}

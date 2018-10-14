@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <memory>
+#include <vector>
 
 #include <Eigen/Core>
 
@@ -35,6 +36,7 @@ public:
   Neural_Layer(int nneurons, int ninputs);
 
   Evector feedforward(Evector input);
+  std::vector<Evector> feedforward_batch(std::vector<Evector> input);
 
   Ematrix GetWeights() { return _w; }
   Evector GetBiases() { return _b; }
