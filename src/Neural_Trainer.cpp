@@ -1,5 +1,24 @@
 #include "Neural_Trainer.h"
 
+#include <algorithm>
+#include <random>
+#include <iterator>
+
+std::vector<int> shuffle_indices(int nindices)
+{
+  std::vector<int> indices;
+  indices.reserve(nindices);
+  for (int i = 0; i < nindices; ++i)
+    indices.push_back(i);
+
+  std::random_device rd;
+  std::mt19937 g(rd());
+
+  std::shuffle(indices.begin(), indices.end(), g);
+
+  return indices;
+}
+
 Neural_Trainer::Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, std::vector<function> derv_funs, float learning_rate)
 {
   _neur_ptrs = neural_ptr;
