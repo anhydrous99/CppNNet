@@ -12,13 +12,11 @@ set(CMAKE_BUILD_TYPE DEBUG)
 
 hunter_add_package(Eigen)
 find_package(Eigen3 CONFIG REQUIRED)
-
 find_package(OpenMP REQUIRED)
 
 include_directories(include)
 
-set(SOURCES src/CSV_Importer.cpp src/Normalizer.cpp src/Neural_Layer.cpp src/Neural_Trainer.cpp src/main.cpp)
+add_subdirectory(src)
 
-add_executable(CppNNet ${SOURCES})
-
-target_link_libraries(CppNNet Eigen3::Eigen OpenMP::OpenMP_CXX)
+enable_testing()
+add_subdirectory(tests)
