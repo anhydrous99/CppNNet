@@ -25,12 +25,17 @@ public:
   Normalizer(NormSettings settings);
 
   void norm(Eigen::VectorXf& to_norm);
+  Eigen::VectorXf GetNorm(Eigen::VectorXf& to_norm);
 
   void reverse(Eigen::VectorXf& to_reverse);
   void reverse(Eigen::VectorXf& to_reverse, NormSettings settings);
+  Eigen::VectorXf GetReverse(Eigen::VectorXf& to_reverse);
 
   void batch_norm(std::vector<Eigen::VectorXf>& to_norm);
   void batch_reverse(std::vector<Eigen::VectorXf>& to_reverse);
+
+  std::vector<Eigen::VectorXf> get_batch_norm(std::vector<Eigen::VectorXf>& to_norm);
+  std::vector<Eigen::VectorXf> get_batch_reverse(std::vector<Eigen::VectorXf>& to_reverse);
 
   NormSettings GetSettings() { return _settings; }
 

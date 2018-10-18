@@ -4,7 +4,9 @@
 #include <random>
 #include <iterator>
 
-std::vector<int> shuffle_indices(int nindices)
+#include <iostream>
+
+std::vector<int> Neural_Trainer::shuffle_indices(int nindices)
 {
   std::vector<int> indices;
   indices.reserve(nindices);
@@ -47,58 +49,61 @@ Neural_Trainer::Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr,
 void Neural_Trainer::train_sample(Evector s, Evector t)
 {
   std::vector<Evector> n, a;
+  int M = _neur_ptrs.size();
 
   // Forward Propagate
+  //  a_0 = s
   a.push_back(s);
-  for (int i = 1, size = _neur_ptrs.size(); i <= size; i++)
+  for (int m = 1; m <= M; m++)
   {
-    std::shared_ptr<Neural_Layer> cur_ptr = _neur_ptrs[i-1];
-    Evector ni = cur_ptr->_w * a[i-1] + cur_ptr->_b;
-    Evector ai = ni;
+    // Calculate n first n = w * a + b
+    int mm1 = m - 1;
+    std::shared_ptr<Neural_Layer> current_ptr = _neur_ptrs[mm1];
+    Evector n_cur = current_ptr->_w * a[mm1] + current_ptr->_b;
+    Evector a_cur = n_cur;
 
-    for (int j = 0, sizej = ai.size(); j < sizej; j++)
-      ai[j] =  cur_ptr->_activ_func(ai[j]);
+    // Calculate new a from n
+    for (int i = 0, size = a_cur.size(); i < size; i++)
+      a_cur[i] = current_ptr->_activ_func(a_cur[i]);
 
-    n.push_back(ni);
-    a.push_back(ai);
+    // Store both a and n
+    n.push_back(n_cur);
+    a.push_back(a_cur);
   }
 
   // Backward Propagate
-  int si = _neur_ptrs.size();
-  Evector Sp1;
-  for (int i = si; i >= 1; i--)
+  Evector past_sensitivity;
+  for (int m = M; m >= 1; m--)
   {
     // Calculate Sensitivities
-    int i1 = i-1;
-    Evector sen(n[i1].size());
-    std::shared_ptr<Neural_Layer> cur_ptr = _neur_ptrs[i1];
-    if (i == si)
+    int mm1 = m - 1;
+    Evector sensitivity(n[mm1].size());
+    std::shared_ptr<Neural_Layer> current_ptr = _neur_ptrs[mm1];
+    if (m == M)
     {
-      Evector e = t - s;
-      for (int j = 0, sizej = n[i1].size(); j < sizej; j++)
-        sen[j] = - 2 * _daf[i1](n[i1][j]) * e[j];
+      // Calculate first sensitivities
+      for (int i = 0, size = n[mm1].size(); i < size; i++)
+        sensitivity[i] = -2 * _daf[mm1](n[mm1][i]) * (t[i] - a[m][i]);
     }
     else
     {
-      for (int j = 0, sizej = sen.size(); j < sizej; j++)
+      for (int i = 0, sizei = n[mm1].size(); i < sizei; i++)
       {
-        float sum = 0;
-        for (int k = 0, sizek = Sp1.size(); k < sizek; k++)
-          sum += _daf[i1](n[i1][j]) * _neur_ptrs[i]->_w(k,j) * Sp1[k];
-        sen[j] = sum;
+        sensitivity[i] = 0.0;
+        for (int j = 0, sizej = past_sensitivity.size(); j < sizej; j++)
+          sensitivity[i] += _neur_ptrs[m]->_w(j,i) * past_sensitivity[j];
+        sensitivity[i] *= _daf[mm1](n[mm1][i]);
       }
     }
-    Sp1 = sen;
+    // Store Sensitivity for future use
+    past_sensitivity = sensitivity;
 
-    // Calculate New weights
-    Ematrix sa(sen.size(), a[i1].size());
-    for (int j = 0, sizej = sen.size(); j < sizej; j++)
-      for (int k = 0, sizek = a[i1].size(); k < sizek; k++)
-        sa(j,k) = sen[j] * a[i1][k];
+    // Calculate new weights
+    for (int i = 0, sizei = sensitivity.size(); i < sizei; i++)
+      for (int j = 0, sizej = a[mm1].size(); j < sizej; j++)
+        current_ptr->_w(i,j) -= _learning_rate * sensitivity[i] * a[mm1][j];
 
-    cur_ptr->_w = cur_ptr->_w - _learning_rate * sa;
-
-    // Calculate New Biases
-    cur_ptr->_b = cur_ptr->_b - _learning_rate * sen;
+    // Calculate new bias
+    current_ptr->_b -= _learning_rate * sensitivity;
   }
 }
