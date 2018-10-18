@@ -32,6 +32,8 @@ public:
   void batch_norm(std::vector<Eigen::VectorXf>& to_norm);
   void batch_reverse(std::vector<Eigen::VectorXf>& to_reverse);
 
+  NormSettings GetSettings() { return _settings; }
+
   ~Normalizer() {}
 };
 

@@ -14,8 +14,8 @@ Normalizer::Normalizer(std::vector<Eigen::VectorXf>& xlist, float ymin, float ym
     for (int i = 0; i < isize; i++)
     {
       float cur = xlist[i][j];
-      if (xmin < cur) xmin = cur;
-      if (xmax > cur) xmax = cur;
+      if (xmin > cur) xmin = cur;
+      if (xmax < cur) xmax = cur;
     }
     xoffset[j] = xmin;
     gain[j] = diff / (xmax - xmin);
