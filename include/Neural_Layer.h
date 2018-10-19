@@ -11,7 +11,7 @@ typedef std::function<float(float)> function;
 typedef Eigen::MatrixXf Ematrix;
 typedef Eigen::VectorXf Evector;
 
-class Neural_Layer
+class Neural_Layer : public std::enable_shared_from_this<Neural_Layer>
 {
 private:
   typedef std::shared_ptr<Neural_Layer> Neural_Ptr;
@@ -24,6 +24,8 @@ private:
   function _activ_func = [](float x){ return x; };
   // Pointer to Previous Layer
   Neural_Ptr _prev_layer;
+  // Function to get vector of pointer to all layers
+  std::vector<Neural_Ptr> GetVecPtrs();
 public:
   // Constructors
   Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, function activation_function);
@@ -39,8 +41,6 @@ public:
 
   Evector feedforward(Evector input);
   std::vector<Evector> feedforward_batch(std::vector<Evector> input);
-
-  std::vector<Neural_Ptr> GetVecPtrs();
 
   Ematrix GetWeights() { return _w; }
   Evector GetBiases() { return _b; }

@@ -57,12 +57,7 @@ Neural_Layer::Neural_Layer(int nneurons, int ninputs) : _w(nneurons, ninputs), _
 
 Evector Neural_Layer::feedforward(Evector input)
 {
-  Evector a;
-  if (_prev_layer)
-    a = _prev_layer->feedforward(input);
-  else
-    a = input;
-
+  Evector a = (_prev_layer) ? _prev_layer->feedforward(input) : input;
   Evector n = _w * a + _b;
 
   for (size_t i = 0, size = n.size(); i < size; i++)
@@ -82,13 +77,9 @@ std::vector<Evector> Neural_Layer::feedforward_batch(std::vector<Evector> input)
 std::vector<std::shared_ptr<Neural_Layer>> Neural_Layer::GetVecPtrs()
 {
   std::vector<std::shared_ptr<Neural_Layer>> output;
-  std::vector<std::shared_ptr<Neural_Layer>> tmp;
+
   if (_prev_layer)
-  {
-    tmp = _prev_layer->GetVecPtrs();
-    output.insert(output.end(), tmp.begin(), tmp.end());
-  }
-  std::shared_ptr<Neural_Layer> this_ptr(this);
-  output.push_back(this_ptr);
+    output = _prev_layer->GetVecPtrs();
+  output.push_back(shared_from_this());
   return output;
 }
