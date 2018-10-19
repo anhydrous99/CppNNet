@@ -10,8 +10,8 @@
 int main(int argc, char* argv[])
 {
   // Create Layers
-  std::shared_ptr<Neural_Layer> layer1(new Neural_Layer(5, 1, HyperbolicTan_Function));
-  std::shared_ptr<Neural_Layer> layer2(new Neural_Layer(1, 5, layer1));
+  std::shared_ptr<Neural_Layer> layer1 = std::make_shared<Neural_Layer>(5, 1, HyperbolicTan_Function);
+  std::shared_ptr<Neural_Layer> layer2 = std::make_shared<Neural_Layer>(1, 5, layer1);
 
   // Import Data
   CSV_Importer imp(argv[1], 1, 1);
