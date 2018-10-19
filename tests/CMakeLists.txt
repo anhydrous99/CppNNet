@@ -9,3 +9,7 @@ add_test(NAME NormalizerTest COMMAND Normalizer_Test ${CMAKE_SOURCE_DIR}/trainin
 add_executable(Neural_Training_Test Neural_Training_Test.cpp)
 target_link_libraries(Neural_Training_Test CppNNet)
 add_test(NAME TrainingTest COMMAND Neural_Training_Test ${CMAKE_SOURCE_DIR}/training_data/simpledata_set.csv)
+
+add_executable(Iris_Dataset_Test Iris_Dataset_Test.cpp)
+target_link_libraries(Iris_Dataset_Test CppNNet)
+add_test(NAME IrisDatasetTest COMMAND Iris_Dataset_Test ${CMAKE_SOURCE_DIR}/training_data/iris_dataset.csv)

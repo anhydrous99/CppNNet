@@ -42,12 +42,8 @@ int main(int argc, char* argv[])
       trainer.train_sample(normed_samples[idxs[j]], normed_targets[idxs[j]]);
   }
 
-  Evector input = normed_samples[0];
-  Evector unnormed_output = layer2->feedforward(input);
-  Evector output = targetn.GetReverse(unnormed_output);
-
-  float e = abs(targets[0][0] - output[0]);
-
-  std::cout << "Ouput Vector:\n" << output << "\nTarget Vector:\n" << targets[0] << std::endl;
-  return (0.5 < e) ? 1 : 0 ;
+  // Calculate Error
+  float mse = layer2->mse(normed_samples, normed_targets);
+  std::cout << "MSE: " << mse << std::endl;
+  return (0.1 < mse);
 }

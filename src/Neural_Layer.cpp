@@ -83,3 +83,20 @@ std::vector<std::shared_ptr<Neural_Layer>> Neural_Layer::GetVecPtrs()
   output.push_back(shared_from_this());
   return output;
 }
+
+float Neural_Layer::mse(std::vector<Evector> input, std::vector<Evector> target)
+{
+  std::vector<Evector> output = feedforward_batch(input);
+
+  float mse = 0.0;
+  for (int i = 0, sizei = output.size(); i < sizei; i++)
+  {
+    Evector e = target[i] - output[i];
+
+    for (int j = 0, sizej = e.size(); j < sizej; j++)
+      e[j] *= e[j];
+
+    mse += e.sum();
+  }
+  return mse / (output.size() * output[0].size());
+}

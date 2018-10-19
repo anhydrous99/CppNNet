@@ -42,6 +42,8 @@ public:
   Evector feedforward(Evector input);
   std::vector<Evector> feedforward_batch(std::vector<Evector> input);
 
+  float mse(std::vector<Evector> input, std::vector<Evector> target);
+
   Ematrix GetWeights() { return _w; }
   Evector GetBiases() { return _b; }
 
