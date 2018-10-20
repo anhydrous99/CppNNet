@@ -5,10 +5,8 @@
 #include "CSV_Importer.h"
 #include <iostream>
 
-int main(int argc, char* argv[])
-{
-  if (argc != 2)
-  {
+int main(int argc, char *argv[]) {
+  if (argc != 2) {
     std::cerr << "Error: Wrong number of arguments. Exiting...\n";
     return 1;
   }
@@ -40,8 +38,7 @@ int main(int argc, char* argv[])
   // Get Shuffle Idnices
 
   // Train
-  for (int i = 0, sizei = 10000; i < sizei; i++)
-  {
+  for (int i = 0, sizei = 10000; i < sizei; i++) {
     std::vector<int> idxs = trainer.shuffle_indices(samples.size());
     for (int j = 0, sizej = samples.size(); j < sizej; j++)
       trainer.train_sample(normed_samples[idxs[j]], normed_targets[idxs[j]]);

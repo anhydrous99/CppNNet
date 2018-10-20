@@ -4,10 +4,8 @@
 #include "CSV_Importer.h"
 #include <iostream>
 
-int main(int argc, char* argv[])
-{
-  if (argc != 2)
-  {
+int main(int argc, char *argv[]) {
+  if (argc != 2) {
     std::cout << "Error: wrong number of arguments. Exiting...\n";
     return 1;
   }
@@ -36,8 +34,7 @@ int main(int argc, char* argv[])
   Neural_Trainer trainer(layer2, derv_funs);
 
   // Train
-  for (int i = 0, sizei = 1000; i < sizei; i++)
-  {
+  for (int i = 0, sizei = 1000; i < sizei; i++) {
     std::vector<int> idxs = trainer.shuffle_indices(samples.size());
     for (int j = 0, sizej = samples.size(); j < sizej; j++)
       trainer.train_sample(samples[idxs[j]], targets[idxs[j]]);

@@ -3,8 +3,7 @@
 
 #include "Neural_Layer.h"
 
-class Neural_Trainer
-{
+class Neural_Trainer {
 private:
   std::vector<std::shared_ptr<Neural_Layer>> _neur_ptrs;
   std::vector<function> _daf;
@@ -12,9 +11,12 @@ private:
 
 public:
   Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, std::vector<function> derv_fun);
-  Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, std::vector<function> derv_fun, float learning_rate);
+
+  Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, std::vector<function> derv_fun,
+                 float learning_rate);
 
   Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, std::vector<function> derv_fun);
+
   Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, std::vector<function> derv_fun, float learning_rate);
 
   ~Neural_Trainer() = default;

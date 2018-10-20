@@ -3,8 +3,7 @@
 #include "Normalizer.h"
 #include <iostream>
 
-int main()
-{
+int main() {
   std::cout << "Testing Neural_Layer\n";
   // Declare Weights and bias matrices and vectors
   Ematrix Weights_Layer1(5, 1);
@@ -14,10 +13,10 @@ int main()
   Evector Bias_Layer2(1);
 
   // Add weights to matrices and vectors
-  Weights_Layer1 << 6.0140,-5.1062, 5.0833, 3.8055,-3.4355;
-  Bias_Layer1    <<-4.9522, 2.4840,-0.8271, 2.3480,-3.5037;
-  Weights_Layer2 << 0.8756, 1.3115, 0.3390,-0.7949,-1.9944;
-  Bias_Layer2    <<-0.9361;
+  Weights_Layer1 << 6.0140, -5.1062, 5.0833, 3.8055, -3.4355;
+  Bias_Layer1 << -4.9522, 2.4840, -0.8271, 2.3480, -3.5037;
+  Weights_Layer2 << 0.8756, 1.3115, 0.3390, -0.7949, -1.9944;
+  Bias_Layer2 << -0.9361;
 
   // Declare Activation Functions for 1st layer
   // From Activation_Functions.h
