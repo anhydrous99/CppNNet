@@ -4,7 +4,6 @@
 #include <functional>
 #include <memory>
 #include <vector>
-
 #include <Eigen/Core>
 
 typedef std::function<float(float)> function;

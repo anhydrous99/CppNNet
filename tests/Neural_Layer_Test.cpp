@@ -1,7 +1,6 @@
 #include "Activation_Functions.h"
 #include "Neural_Layer.h"
 #include "Normalizer.h"
-
 #include <iostream>
 
 int main()

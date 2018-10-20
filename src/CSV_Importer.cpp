@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <sstream>
 
 CSV_Importer::CSV_Importer(std::string& filename, int size_of_samples, int size_of_targets)
 {

@@ -2,7 +2,6 @@
 #define CSV_IMPORTER_H
 
 #include <Eigen/Core>
-
 #include <string>
 #include <vector>
 

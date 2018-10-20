@@ -2,7 +2,6 @@
 #define NEURAL_TRAINER_H
 
 #include "Neural_Layer.h"
-#include <vector>
 
 class Neural_Trainer
 {

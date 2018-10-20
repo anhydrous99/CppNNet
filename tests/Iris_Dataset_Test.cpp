@@ -2,7 +2,6 @@
 #include "Neural_Layer.h"
 #include "Neural_Trainer.h"
 #include "CSV_Importer.h"
-
 #include <iostream>
 
 int main(int argc, char* argv[])

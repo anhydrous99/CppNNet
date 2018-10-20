@@ -1,8 +1,6 @@
 #include "Neural_Trainer.h"
 
-#include <algorithm>
 #include <random>
-#include <iterator>
 
 std::vector<int> Neural_Trainer::shuffle_indices(int nindices)
 {

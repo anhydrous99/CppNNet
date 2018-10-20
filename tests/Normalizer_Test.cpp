@@ -1,6 +1,5 @@
-#include <CSV_Importer.h>
-#include <Normalizer.h>
-
+#include "CSV_Importer.h"
+#include "Normalizer.h"
 #include <iostream>
 
 int main(int argc, char* argv[])
