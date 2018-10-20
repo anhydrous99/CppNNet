@@ -9,6 +9,12 @@
 
 int main(int argc, char* argv[])
 {
+  if (argc != 2)
+  {
+    std::cerr << "Error: Wrong number of arguments. Exiting...\n";
+    return 1;
+  }
+
   // Create Layers
   std::shared_ptr<Neural_Layer> layer1 = std::make_shared<Neural_Layer>(5, 1, HyperbolicTan_Function);
   std::shared_ptr<Neural_Layer> layer2 = std::make_shared<Neural_Layer>(1, 5, layer1);
