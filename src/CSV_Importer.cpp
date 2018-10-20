@@ -4,14 +4,14 @@
 #include <fstream>
 #include <sstream>
 
-CSV_Importer::CSV_Importer(std::string filename, int size_of_samples, int size_of_targets)
+CSV_Importer::CSV_Importer(std::string& filename, int size_of_samples, int size_of_targets)
 {
   _filename = filename;
   _sof = size_of_samples;
   _sot = size_of_targets;
 }
 
-CSV_Importer::CSV_Importer(std::string filename, int size_of_samples, int size_of_targets, char delimiter) :
+CSV_Importer::CSV_Importer(std::string& filename, int size_of_samples, int size_of_targets, char delimiter) :
   CSV_Importer(filename, size_of_samples, size_of_targets)
 {
   _delim = delimiter;

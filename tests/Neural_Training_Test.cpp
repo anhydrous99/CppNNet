@@ -20,7 +20,8 @@ int main(int argc, char* argv[])
   std::shared_ptr<Neural_Layer> layer2 = std::make_shared<Neural_Layer>(1, 5, layer1);
 
   // Import Data
-  CSV_Importer imp(argv[1], 1, 1);
+  std::string path = argv[1];
+  CSV_Importer imp(path, 1, 1);
   std::vector<Evector> samples = imp.GetSamples();
   std::vector<Evector> targets = imp.GetTargets();
 

@@ -17,8 +17,8 @@ private:
 
   void ObtainData();
 public:
-  CSV_Importer(std::string filename, int size_of_samples, int size_of_targets);
-  CSV_Importer(std::string filename, int size_of_samples, int size_of_targets, char delimiter);
+  CSV_Importer(std::string& filename, int size_of_samples, int size_of_targets);
+  CSV_Importer(std::string& filename, int size_of_samples, int size_of_targets, char delimiter);
 
   ~CSV_Importer() = default;
 

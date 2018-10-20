@@ -5,8 +5,15 @@
 
 int main(int argc, char* argv[])
 {
+  if (argc != 2)
+  {
+    std::cerr << "Error: Wrong number of arguments. Exiting...\n";
+    return 1;
+  }
+
   // Import Data
-  CSV_Importer imp(argv[1], 1, 1);
+  std::string path = argv[1];
+  CSV_Importer imp(path, 1, 1);
   std::vector<Eigen::VectorXf> samples = imp.GetSamples();
   std::vector<Eigen::VectorXf> targets = imp.GetTargets();
 
