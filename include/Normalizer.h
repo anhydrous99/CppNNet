@@ -39,7 +39,7 @@ public:
 
   NormSettings GetSettings() { return _settings; }
 
-  ~Normalizer() {}
+  ~Normalizer() = default;
 };
 
 #endif // NORMALIZER_H

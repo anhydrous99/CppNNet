@@ -20,7 +20,7 @@ public:
   CSV_Importer(std::string filename, int size_of_samples, int size_of_targets);
   CSV_Importer(std::string filename, int size_of_samples, int size_of_targets, char delimiter);
 
-  ~CSV_Importer() {}
+  ~CSV_Importer() = default;
 
   std::vector<std::string> GetData();
   std::vector<Eigen::VectorXf> GetSamples();

@@ -37,7 +37,7 @@ public:
   Neural_Layer(int nneurons, int ninputs, function activation_function);
   Neural_Layer(int nneurons, int ninputs);
 
-  ~Neural_Layer() {}
+  ~Neural_Layer() = default;
 
   Evector feedforward(Evector input);
   std::vector<Evector> feedforward_batch(std::vector<Evector> input);
