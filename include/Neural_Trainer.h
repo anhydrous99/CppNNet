@@ -23,6 +23,8 @@ public:
 
   void train_sample(Evector s, Evector t);
 
+//  void train_batch(std::vector<Evector> s, std::vector<Evector> t);
+
   std::vector<int> shuffle_indices(int nindices);
 };
 

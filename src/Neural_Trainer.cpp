@@ -41,7 +41,7 @@ Neural_Trainer::Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr,
 
 void Neural_Trainer::train_sample(Evector s, Evector t) {
   std::vector<Evector> n, a;
-  int M = _neur_ptrs.size();
+  unsigned long M = _neur_ptrs.size();
 
   // Forward Propagate
   //  a_0 = s
@@ -51,32 +51,32 @@ void Neural_Trainer::train_sample(Evector s, Evector t) {
     int mm1 = m - 1;
     std::shared_ptr<Neural_Layer> current_ptr = _neur_ptrs[mm1];
     Evector n_cur = current_ptr->_w * a[mm1] + current_ptr->_b;
-    Evector a_cur = n_cur;
+    Evector a_cur(n_cur.size());
 
     // Calculate new a from n
-    for (int i = 0, size = a_cur.size(); i < size; i++)
-      a_cur[i] = current_ptr->_activ_func(a_cur[i]);
+    for (long i = 0, size = a_cur.size(); i < size; i++)
+      a_cur[i] = current_ptr->_activ_func(n_cur[i]);
 
     // Store both a and n
-    n.push_back(n_cur);
-    a.push_back(a_cur);
+    n.push_back(std::move(n_cur));
+    a.push_back(std::move(a_cur));
   }
 
   // Backward Propagate
   Evector past_sensitivity;
-  for (int m = M; m >= 1; m--) {
+  for (unsigned long m = M; m >= 1; m--) {
     // Calculate Sensitivities
-    int mm1 = m - 1;
+    unsigned long mm1 = m - 1;
     Evector sensitivity(n[mm1].size());
     std::shared_ptr<Neural_Layer> current_ptr = _neur_ptrs[mm1];
     if (m == M) {
       // Calculate first sensitivities
-      for (int i = 0, size = n[mm1].size(); i < size; i++)
+      for (long i = 0, size = n[mm1].size(); i < size; i++)
         sensitivity[i] = -2 * _daf[mm1](n[mm1][i]) * (t[i] - a[m][i]);
     } else {
-      for (int i = 0, sizei = n[mm1].size(); i < sizei; i++) {
+      for (long i = 0, sizei = n[mm1].size(); i < sizei; i++) {
         sensitivity[i] = 0.0;
-        for (int j = 0, sizej = past_sensitivity.size(); j < sizej; j++)
+        for (long j = 0, sizej = past_sensitivity.size(); j < sizej; j++)
           sensitivity[i] += _neur_ptrs[m]->_w(j, i) * past_sensitivity[j];
         sensitivity[i] *= _daf[mm1](n[mm1][i]);
       }
@@ -85,11 +85,18 @@ void Neural_Trainer::train_sample(Evector s, Evector t) {
     past_sensitivity = sensitivity;
 
     // Calculate new weights
-    for (int i = 0, sizei = sensitivity.size(); i < sizei; i++)
-      for (int j = 0, sizej = a[mm1].size(); j < sizej; j++)
+    for (long i = 0, sizei = sensitivity.size(); i < sizei; i++)
+      for (long j = 0, sizej = a[mm1].size(); j < sizej; j++)
         current_ptr->_w(i, j) -= _learning_rate * sensitivity[i] * a[mm1][j];
 
     // Calculate new bias
     current_ptr->_b -= _learning_rate * sensitivity;
   }
 }
+
+//void Neural_Trainer::train_batch(std::vector<Evector> s, std::vector<Evector> t) {
+//  unsigned long Q = s.size(),
+//      M = _neur_ptrs.size();
+// Temporary Vectors of vectors
+//  std::vector<std::vector<Evector>> a, n;
+//}
