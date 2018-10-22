@@ -3,6 +3,7 @@
 #include "Neural_Trainer.h"
 #include "CSV_Importer.h"
 #include <iostream>
+#include <chrono>
 
 int main(int argc, char *argv[]) {
   if (argc != 2) {
@@ -34,14 +35,16 @@ int main(int argc, char *argv[]) {
   Neural_Trainer trainer(layer2, derv_funs);
 
   // Train
-  for (int i = 0, sizei = 1000; i < sizei; i++) {
-    std::vector<int> idxs = trainer.shuffle_indices(samples.size());
-    for (int j = 0, sizej = samples.size(); j < sizej; j++)
-      trainer.train_sample(samples[idxs[j]], targets[idxs[j]]);
+  auto start = std::chrono::steady_clock::now();
+  for (int i = 0, sizei = 5000; i < sizei; i++) {
+    trainer.train_batch(samples, targets);
   }
+  auto end = std::chrono::steady_clock::now();
 
   // Calculate error
   float mse = layer2->mse(samples, targets);
   std::cout << "MSE: " << mse << std::endl;
+  std::cout << "It took " << std::chrono::duration_cast<std::chrono::seconds>(end - start).count() << " seconds"
+            << std::endl;
   return (0.1 < mse);
 }
