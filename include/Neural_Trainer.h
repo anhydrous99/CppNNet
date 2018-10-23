@@ -21,9 +21,11 @@ public:
 
   ~Neural_Trainer() = default;
 
-  void train_sample(Evector s, Evector t);
+  void train_sample(const Evector &s, const Evector &t);
 
-  void train_batch(std::vector<Evector> s, std::vector<Evector> t);
+  void train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t);
+
+  void train_minibatch(const std::vector<Evector> &s, const std::vector<Evector> &t, unsigned long batch_size);
 
   std::vector<int> shuffle_indices(int nindices);
 };

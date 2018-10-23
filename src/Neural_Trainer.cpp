@@ -1,5 +1,5 @@
 #include "Neural_Trainer.h"
-
+#include <iterator>
 #include <random>
 
 std::vector<int> Neural_Trainer::shuffle_indices(int nindices) {
@@ -39,7 +39,7 @@ Neural_Trainer::Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr,
   _learning_rate = learning_rate;
 }
 
-void Neural_Trainer::train_sample(Evector s, Evector t) {
+void Neural_Trainer::train_sample(const Evector &s, const Evector &t) {
   std::vector<Evector> n, a;
   unsigned long M = _neur_ptrs.size();
 
@@ -95,7 +95,7 @@ void Neural_Trainer::train_sample(Evector s, Evector t) {
   }
 }
 
-void Neural_Trainer::train_batch(std::vector<Evector> s, std::vector<Evector> t) {
+void Neural_Trainer::train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t) {
   unsigned long Q = s.size(),
       M = _neur_ptrs.size();
   // Temporary vector
@@ -161,5 +161,35 @@ void Neural_Trainer::train_batch(std::vector<Evector> s, std::vector<Evector> t)
     current_ptr->_w -= aq * sa_sum[m];
     // Calculate new biases
     current_ptr->_b -= aq * s_sum[m];
+  }
+}
+
+void Neural_Trainer::train_minibatch(const std::vector<Evector> &s, const std::vector<Evector> &t,
+                                     unsigned long batch_size) {
+  // Get begin iterator and end iterator for s
+  auto s_begin(s.cbegin());
+  auto s_end(s.cend());
+
+  // Get begin iterator and end iterator for t
+  auto t_begin(t.cbegin());
+  auto t_end(t.cend());
+
+  auto n_iterations = (unsigned long) std::floor((double) s.size() / (double) batch_size);
+
+  for (unsigned long i = 0; i < n_iterations; i++) {
+    // s slice iterators
+    auto s_slice_start(s_begin + i * batch_size);
+    auto s_slice_end((i != n_iterations - 1) ? s_begin + (i + 1) * batch_size : s_end);
+
+    // t slice iterators
+    auto t_slice_start(t_begin + i * batch_size);
+    auto t_slice_end((i != n_iterations - 1) ? t_begin + (i + 1) * batch_size : t_end);
+
+    // Create vectors from slices
+    std::vector<Evector> s_slice(s_slice_start, s_slice_end);
+    std::vector<Evector> t_slice(t_slice_start, t_slice_end);
+
+    // Train
+    train_batch(s_slice, t_slice);
   }
 }
