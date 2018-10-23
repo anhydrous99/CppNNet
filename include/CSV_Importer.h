@@ -15,6 +15,8 @@ private:
 
   void ObtainData();
 
+  std::string Downloader();
+
 public:
   CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets);
 

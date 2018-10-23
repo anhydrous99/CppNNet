@@ -6,12 +6,15 @@ HunterGate(
         SHA1 "acbf4b9b77b5a0160adc1da1cdda35f64b14196a"
 )
 
-project(CppNNet LANGUAGES CXX)
+project(CppNNet)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_BUILD_TYPE DEBUG)
 
 hunter_add_package(Eigen)
+hunter_add_package(CURL)
 find_package(Eigen3 CONFIG REQUIRED)
+find_package(CURL CONFIG REQUIRED)
+
 find_package(OpenMP REQUIRED)
 
 include_directories(include)
