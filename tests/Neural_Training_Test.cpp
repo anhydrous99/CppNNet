@@ -35,10 +35,8 @@ int main(int argc, char *argv[]) {
   // Create Trainer
   Neural_Trainer trainer(layer2, derv_funs);
 
-  // Get Shuffle Idnices
-
   // Train
-  for (int i = 0, sizei = 10000; i < sizei; i++) {
+  for (int i = 0, sizei = 2000; i < sizei; i++) {
     std::vector<int> idxs = trainer.shuffle_indices(samples.size());
     for (int j = 0, sizej = samples.size(); j < sizej; j++)
       trainer.train_sample(normed_samples[idxs[j]], normed_targets[idxs[j]]);
@@ -46,6 +44,16 @@ int main(int argc, char *argv[]) {
 
   // Calculate Error
   float mse = layer2->mse(normed_samples, normed_targets);
-  std::cout << "MSE: " << mse << std::endl;
+  float rmse = layer2->rmse(normed_samples, normed_targets);
+  float mae = layer2->mae(normed_samples, normed_targets);
+  float mpe = layer2->mpe(normed_samples, normed_targets);
+  float mape = layer2->mape(normed_samples, normed_targets);
+  float r2 = layer2->r2(normed_samples, normed_targets);
+  std::cout << "MSE:  " << mse << std::endl;
+  std::cout << "RMSE: " << rmse << std::endl;
+  std::cout << "MAE:  " << mae << std::endl;
+  std::cout << "MPE:  " << mpe << std::endl;
+  std::cout << "MAPE: " << mape << std::endl;
+  std::cout << "R^2:  " << r2 << std::endl;
   return (0.1 < mse);
 }

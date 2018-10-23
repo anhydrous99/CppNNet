@@ -50,7 +50,23 @@ public:
 
   std::vector<Evector> feedforward_batch(std::vector<Evector> input);
 
-  float mse(std::vector<Evector> input, std::vector<Evector> target);
+  // Mean Square Error
+  float mse(const std::vector<Evector> &input, const std::vector<Evector> &target);
+
+  // Root Mean Square Error
+  float rmse(const std::vector<Evector> &input, const std::vector<Evector> &target);
+
+  // Mean Absolute Error
+  float mae(const std::vector<Evector> &input, const std::vector<Evector> &target);
+
+  // Mean Percent Error
+  float mpe(const std::vector<Evector> &input, const std::vector<Evector> &target);
+
+  // Mean Absolute Percent Error
+  float mape(const std::vector<Evector> &input, const std::vector<Evector> &target);
+
+  // coefficient of determination (R squared)
+  float r2(const std::vector<Evector> &input, const std::vector<Evector> &target);
 
   Ematrix GetWeights() { return _w; }
 

@@ -35,16 +35,31 @@ int main(int argc, char *argv[]) {
   Neural_Trainer trainer(layer2, derv_funs);
 
   // Train
-  auto start = std::chrono::steady_clock::now();
-  for (int i = 0, sizei = 5000; i < sizei; i++) {
+  auto start1 = std::chrono::steady_clock::now();
+  for (int i = 0, sizei = 2000; i < sizei; i++) {
     trainer.train_batch(samples, targets);
   }
-  auto end = std::chrono::steady_clock::now();
+  auto end1 = std::chrono::steady_clock::now();
 
   // Calculate error
   float mse = layer2->mse(samples, targets);
-  std::cout << "MSE: " << mse << std::endl;
-  std::cout << "It took " << std::chrono::duration_cast<std::chrono::seconds>(end - start).count() << " seconds"
+  float rmse = layer2->rmse(samples, targets);
+  float mae = layer2->mae(samples, targets);
+  float mpe = layer2->mpe(samples, targets);   // mpe and mape return -nan and inf
+  float mape = layer2->mape(samples, targets); //  since targets contain zeros
+  float r2 = layer2->r2(samples, targets);
+  auto end2 = std::chrono::steady_clock::now();
+
+  std::cout << "MSE:            " << mse << std::endl;
+  std::cout << "RMSE:           " << rmse << std::endl;
+  std::cout << "MAE:            " << mae << std::endl;
+  std::cout << "MPE:            " << mpe << std::endl;
+  std::cout << "MAPE:           " << mape << std::endl;
+  std::cout << "R^2:            " << r2 << std::endl;
+  std::cout << "It took         " << std::chrono::duration_cast<std::chrono::seconds>(end1 - start1).count()
+            << " seconds"
             << std::endl;
-  return (0.1 < mse);
+  std::cout << "Statistics took " << std::chrono::duration_cast<std::chrono::milliseconds>(end2 - end1).count()
+            << " milliseconds";
+  return (0.5 < mse);
 }
