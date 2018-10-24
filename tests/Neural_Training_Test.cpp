@@ -49,11 +49,17 @@ int main(int argc, char *argv[]) {
   float mpe = layer2->mpe(normed_samples, normed_targets);
   float mape = layer2->mape(normed_samples, normed_targets);
   float r2 = layer2->r2(normed_samples, normed_targets);
+  float aic = layer2->aic(normed_samples, normed_targets);
+  float aicc = layer2->aicc(normed_samples, normed_targets);
+  float bic = layer2->bic(normed_samples, normed_targets);
   std::cout << "MSE:  " << mse << std::endl;
   std::cout << "RMSE: " << rmse << std::endl;
   std::cout << "MAE:  " << mae << std::endl;
   std::cout << "MPE:  " << mpe << std::endl;
   std::cout << "MAPE: " << mape << std::endl;
   std::cout << "R^2:  " << r2 << std::endl;
+  std::cout << "AIC:  " << aic << std::endl;
+  std::cout << "AICC: " << aicc << std::endl;
+  std::cout << "BIC   " << bic << std::endl;
   return (0.1 < mse);
 }

@@ -26,6 +26,9 @@ private:
   // Function to get vector of pointer to all layers
   std::vector<Neural_Ptr> GetVecPtrs();
 
+  // Gets the number of weights and biases
+  long parameter_count();
+
 public:
   // Constructors
   Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, function activation_function);
@@ -67,6 +70,15 @@ public:
 
   // coefficient of determination (R squared)
   float r2(const std::vector<Evector> &input, const std::vector<Evector> &target);
+
+  // Akaike information criterion (AIC)
+  float aic(const std::vector<Evector> &input, const std::vector<Evector> &target);
+
+  // Corrected Akaike information criterion (AICc)
+  float aicc(const std::vector<Evector> &input, const std::vector<Evector> &target);
+
+  // Bayesian information criterion (BIC)
+  float bic(const std::vector<Evector> &input, const std::vector<Evector> &target);
 
   Ematrix GetWeights() { return _w; }
 

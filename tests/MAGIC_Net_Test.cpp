@@ -50,6 +50,9 @@ int main(int argc, char *argv[]) {
   float mpe = layer2->mpe(normed_samples, targets);   // mpe and mape return -nan and inf
   float mape = layer2->mape(normed_samples, targets); //  since targets contain zeros
   float r2 = layer2->r2(normed_samples, targets);
+  float aic = layer2->aic(normed_samples, targets);
+  float aicc = layer2->aicc(normed_samples, targets);
+  float bic = layer2->bic(normed_samples, targets);
   auto end2 = std::chrono::steady_clock::now();
 
   std::cout << "MSE:            " << mse << std::endl;
@@ -58,10 +61,13 @@ int main(int argc, char *argv[]) {
   std::cout << "MPE:            " << mpe << std::endl;
   std::cout << "MAPE:           " << mape << std::endl;
   std::cout << "R^2:            " << r2 << std::endl;
+  std::cout << "AIC:            " << aic << std::endl;
+  std::cout << "AICC:           " << aicc << std::endl;
+  std::cout << "BIC             " << bic << std::endl;
   std::cout << "It took         " << std::chrono::duration_cast<std::chrono::seconds>(end1 - start1).count()
             << " seconds"
             << std::endl;
   std::cout << "Statistics took " << std::chrono::duration_cast<std::chrono::milliseconds>(end2 - end1).count()
-            << " milliseconds";
+            << " milliseconds" << std::endl;
   return (0.5 < mse);
 }

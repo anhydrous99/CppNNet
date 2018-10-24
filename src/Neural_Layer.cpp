@@ -1,5 +1,6 @@
 #include "Neural_Layer.h"
 
+#include <algorithm>
 #include <random>
 #include <cmath>
 
@@ -163,4 +164,58 @@ float Neural_Layer::r2(const std::vector<Evector> &input, const std::vector<Evec
   }
 
   return 1 - (ssres / sstot);
+}
+
+// Returns number of weights and biases for the layer and all layers prior
+long Neural_Layer::parameter_count() {
+  long a = (_prev_layer) ? _prev_layer->parameter_count() : 0;
+  return _w.size() + _b.size() + a;
+}
+
+// Akaike information criterion (AIC)
+float Neural_Layer::aic(const std::vector<Evector> &input, const std::vector<Evector> &target) {
+  long p = parameter_count();
+  std::vector<Evector> output = feedforward_batch(input);
+  long sizei = target.size(),
+      sizej = target[0].size();
+
+  float SSE = 0.0;
+  for (long i = 0; i < sizei; i++) {
+    for (long j = 0; j < sizej; j++)
+      SSE += std::pow(target[i][j] - output[i][j], 2);
+  }
+
+  return sizei * std::log(SSE / sizei) + 2 * p;
+}
+
+// Corrected Akaike information criterion (AICc)
+float Neural_Layer::aicc(const std::vector<Evector> &input, const std::vector<Evector> &target) {
+  long p = parameter_count();
+  std::vector<Evector> output = feedforward_batch(input);
+  long sizei = target.size(),
+      sizej = target[0].size();
+
+  float SSE = 0.0;
+  for (long i = 0; i < sizei; i++) {
+    for (long j = 0; j < sizej; j++)
+      SSE += std::pow(target[i][j] - output[i][j], 2);
+  }
+
+  return sizei * (static_cast<float>(sizei + p) / static_cast<float>(-2 + sizei - p) + std::log(SSE / sizei));
+}
+
+// Bayesian information criterion (BIC)
+float Neural_Layer::bic(const std::vector<Evector> &input, const std::vector<Evector> &target) {
+  long p = parameter_count();
+  std::vector<Evector> output = feedforward_batch(input);
+  long sizei = target.size(),
+      sizej = target[0].size();
+
+  float SSE = 0.0;
+  for (long i = 0; i < sizei; i++) {
+    for (long j = 0; j < sizej; j++)
+      SSE += std::pow(target[i][j] - output[i][j], 2);
+  }
+
+  return sizei * std::log(SSE / sizei) + p * std::log(static_cast<float>(sizei));
 }
