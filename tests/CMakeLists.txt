@@ -13,3 +13,7 @@ add_test(NAME TrainingTest COMMAND Neural_Training_Test ${CMAKE_SOURCE_DIR}/trai
 add_executable(Iris_Dataset_Test Iris_Dataset_Test.cpp)
 target_link_libraries(Iris_Dataset_Test CppNNet)
 add_test(NAME IrisDatasetTest COMMAND Iris_Dataset_Test ${CMAKE_SOURCE_DIR}/training_data/iris_dataset.csv)
+
+add_executable(MAGIC_Net_Test MAGIC_Net_Test.cpp)
+target_link_libraries(MAGIC_Net_Test CppNNet)
+add_test(NAME MAGICNetTest COMMAND MAGIC_Net_Test)

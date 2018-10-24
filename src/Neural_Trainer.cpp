@@ -176,6 +176,7 @@ void Neural_Trainer::train_minibatch(const std::vector<Evector> &s, const std::v
 
   auto n_iterations = (unsigned long) std::floor((double) s.size() / (double) batch_size);
 
+#pragma omp parallel for
   for (unsigned long i = 0; i < n_iterations; i++) {
     // s slice iterators
     auto s_slice_start(s_begin + i * batch_size);
