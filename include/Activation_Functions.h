@@ -1,5 +1,10 @@
-#ifndef ACTIVATION_FUNCTIONS_H
-#define ACTIVATION_FUNCTIONS_H
+//
+// Created by Armando Herrera III
+// A small repository of activation functions and their derivatives
+//
+
+#ifndef CPPNNET_ACTIVATION_FUNCTIONS_H
+#define CPPNNET_ACTIVATION_FUNCTIONS_H
 
 #include <functional>
 #include <cmath>
@@ -31,4 +36,4 @@ const std::function<float(float)> Sin_Function_D = [](float x) { return cos(x); 
 const std::function<float(float)> Gaussian_Function = [](float x) { return exp(-pow(x, 2)); };
 const std::function<float(float)> Gaussian_Function_D = [](float x) { return -2 * x * exp(-pow(x, 2)); };
 
-#endif // ACTIVATION_FUNCTIONS_H
+#endif // CPPNNET_ACTIVATION_FUNCTIONS_H

@@ -1,7 +1,10 @@
-#ifndef NORMALIZER_H
-#define NORMALIZER_H
+//
+// Created by Armando Herrera III
+// Alot of times it is necessary to scale information to between two intervals
+//
 
-/* Alot of times it is necessary to scale information to between two intervals */
+#ifndef CPPNNET_NORMALIZER_H
+#define CPPNNET_NORMALIZER_H
 
 #include <Eigen/Core>
 #include <vector>
@@ -49,4 +52,4 @@ public:
   ~Normalizer() = default;
 };
 
-#endif // NORMALIZER_H
+#endif // CPPNNET_NORMALIZER_H

@@ -1,45 +1,42 @@
-#include "Neural_Trainer.h"
-#include <iterator>
-#include <random>
+//
+// Created by Armando Herrera III on 10/24/18.
+//
 
-std::vector<int> Neural_Trainer::shuffle_indices(int nindices) {
-  std::vector<int> indices;
-  indices.reserve(nindices);
-  for (int i = 0; i < nindices; ++i)
-    indices.push_back(i);
+#include "MSGD_Neural_Trainer.h"
 
-  std::random_device rd;
-  std::mt19937 g(rd());
-
-  std::shuffle(indices.begin(), indices.end(), g);
-
-  return indices;
+MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr,
+                                         std::vector<function> derv_fun) : Neural_Trainer(neural_ptr, derv_fun) {
+  _init();
 }
 
-Neural_Trainer::Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptrs,
-                               std::vector<function> derv_funs) {
-  _neur_ptrs = neural_ptrs;
-  _daf = derv_funs;
+MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr,
+                                         std::vector<function> derv_fun, learning_momentum lrm) : Neural_Trainer(
+    neural_ptr, derv_fun, lrm.learning_rate) {
+  _momentum_constant = lrm.momentum;
+  _init();
 }
 
-Neural_Trainer::Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptrs,
-                               std::vector<function> derv_funs, float learning_rate) : Neural_Trainer(neural_ptrs,
-                                                                                                      derv_funs) {
-  _learning_rate = learning_rate;
+MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, std::vector<function> derv_fun) :
+    Neural_Trainer(end_neural_ptr, derv_fun) {
+  _init();
 }
 
-Neural_Trainer::Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, std::vector<function> derv_funs) {
-  _neur_ptrs = end_neural_ptr->GetVecPtrs();
-  _daf = derv_funs;
+MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, std::vector<function> derv_fun,
+                                         learning_momentum lrm) : Neural_Trainer(end_neural_ptr, derv_fun,
+                                                                                 lrm.learning_rate) {
+  _momentum_constant = lrm.momentum;
+  _init();
 }
 
-Neural_Trainer::Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr,
-                               std::vector<function> derv_funs, float learning_rate) :
-    Neural_Trainer(end_neural_ptr, derv_funs) {
-  _learning_rate = learning_rate;
+void MSGD_Neural_Trainer::_init() {
+  unsigned long M = _neur_ptrs.size();
+  for (unsigned long m = 0; m < M; m++) {
+    _past_weights.emplace_back(Ematrix::Zero(_neur_ptrs[m]->_w.rows(), _neur_ptrs[m]->_w.cols()));
+    _past_biases.emplace_back(Evector::Zero(_neur_ptrs[m]->_b.size()));
+  }
 }
 
-void Neural_Trainer::train_sample(const Evector &s, const Evector &t) {
+void MSGD_Neural_Trainer::train_sample(const Evector &s, const Evector &t) {
   std::vector<Evector> n, a;
   unsigned long M = _neur_ptrs.size();
 
@@ -83,21 +80,33 @@ void Neural_Trainer::train_sample(const Evector &s, const Evector &t) {
     }
 
     // Calculate new weights
-    current_ptr->_w -= _learning_rate * sensitivity * a[mm1].matrix().transpose();
+    _past_weights[mm1] =
+        _momentum_constant * _past_weights[mm1] - _learning_rate * sensitivity * a[mm1].matrix().transpose();
+    current_ptr->_w += _past_weights[mm1];
 
     // Calculate new bias
-    current_ptr->_b -= _learning_rate * sensitivity;
+    _past_biases[mm1] = _momentum_constant * _past_biases[mm1] - _learning_rate * sensitivity;
+    current_ptr->_b += _past_biases[mm1];
 
     // Store Sensitivity for future use
     past_sensitivity = std::move(sensitivity);
   }
 }
 
-void Neural_Trainer::train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t) {
+#include <iostream>
+
+void MSGD_Neural_Trainer::train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t) {
   unsigned long Q = s.size(),
       M = _neur_ptrs.size();
-  // Temporary vector
+  // Temporary vectors
   std::vector<int> idxs = shuffle_indices(Q);
+  std::vector<Ematrix> past_weights;
+  std::vector<Evector> past_biases;
+  for (unsigned long m = 0; m < M; m++) {
+    past_weights.emplace_back(Ematrix::Zero(_neur_ptrs[m]->_w.rows(), _neur_ptrs[m]->_w.cols()));
+    past_biases.emplace_back(Evector::Zero(_neur_ptrs[m]->_b.size()));
+  }
+
   // Declare and initialize sa and s matrix and vector
   std::vector<Ematrix> sa_sum;
   std::vector<Evector> s_sum;
@@ -149,7 +158,6 @@ void Neural_Trainer::train_batch(const std::vector<Evector> &s, const std::vecto
       sa_sum[mm1] += sensitivity * aq[mm1].matrix().transpose();
       s_sum[mm1] += sensitivity;
 
-      // Store sensitivity for future use
       past_sensitivity = std::move(sensitivity);
     }
   }
@@ -158,39 +166,10 @@ void Neural_Trainer::train_batch(const std::vector<Evector> &s, const std::vecto
     std::shared_ptr<Neural_Layer> current_ptr = _neur_ptrs[m];
     float aq = _learning_rate / Q;
     // Calculate new weights
-    current_ptr->_w -= aq * sa_sum[m];
+    past_weights[m] = _momentum_constant * past_weights[m] - aq * sa_sum[m];
+    current_ptr->_w += past_weights[m];
     // Calculate new biases
-    current_ptr->_b -= aq * s_sum[m];
-  }
-}
-
-void Neural_Trainer::train_minibatch(const std::vector<Evector> &s, const std::vector<Evector> &t,
-                                     unsigned long batch_size) {
-  // Get begin iterator and end iterator for s
-  auto s_begin(s.cbegin());
-  auto s_end(s.cend());
-
-  // Get begin iterator and end iterator for t
-  auto t_begin(t.cbegin());
-  auto t_end(t.cend());
-
-  auto n_iterations = (unsigned long) std::floor((double) s.size() / (double) batch_size);
-
-#pragma omp parallel for
-  for (unsigned long i = 0; i < n_iterations; i++) {
-    // s slice iterators
-    auto s_slice_start(s_begin + i * batch_size);
-    auto s_slice_end((i != n_iterations - 1) ? s_begin + (i + 1) * batch_size : s_end);
-
-    // t slice iterators
-    auto t_slice_start(t_begin + i * batch_size);
-    auto t_slice_end((i != n_iterations - 1) ? t_begin + (i + 1) * batch_size : t_end);
-
-    // Create vectors from slices
-    std::vector<Evector> s_slice(s_slice_start, s_slice_end);
-    std::vector<Evector> t_slice(t_slice_start, t_slice_end);
-
-    // Train
-    train_batch(s_slice, t_slice);
+    past_biases[m] = _momentum_constant * past_biases[m] - aq * s_sum[m];
+    current_ptr->_b += past_biases[m];
   }
 }

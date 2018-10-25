@@ -17,3 +17,15 @@ add_test(NAME IrisDatasetTest COMMAND Iris_Dataset_Test ${CMAKE_SOURCE_DIR}/trai
 add_executable(MAGIC_Net_Test MAGIC_Net_Test.cpp)
 target_link_libraries(MAGIC_Net_Test CppNNet)
 add_test(NAME MAGICNetTest COMMAND MAGIC_Net_Test)
+
+add_executable(MSGD_Neural_Training_Test MSGD_Neural_Training_Test.cpp)
+target_link_libraries(MSGD_Neural_Training_Test CppNNet)
+add_test(NAME MSGD_TrainingTest COMMAND MSGD_Neural_Training_Test ${CMAKE_SOURCE_DIR}/training_data/simpledata_set.csv)
+
+add_executable(MSGD_Iris_Dataset_Test MSGD_Iris_Dataset_Test.cpp)
+target_link_libraries(MSGD_Iris_Dataset_Test CppNNet)
+add_test(NAME MSGD_IrisDatasetTest COMMAND MSGD_Iris_Dataset_Test ${CMAKE_SOURCE_DIR}/training_data/iris_dataset.csv)
+
+add_executable(MSGD_MAGIC_Net_Test MSGD_MAGIC_Net_Test.cpp)
+target_link_libraries(MSGD_MAGIC_Net_Test CppNNet)
+add_test(NAME MSGD_MAGICNetTest COMMAND MSGD_MAGIC_Net_Test)

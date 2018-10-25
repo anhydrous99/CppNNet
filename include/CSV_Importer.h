@@ -1,5 +1,10 @@
-#ifndef CSV_IMPORTER_H
-#define CSV_IMPORTER_H
+//
+// Created by Armando Herrera III
+// Imports or Downloads data in the CSV format
+//
+
+#ifndef CPPNNET_CSV_IMPORTER_H
+#define CPPNNET_CSV_IMPORTER_H
 
 #include <Eigen/Core>
 #include <string>
@@ -39,4 +44,4 @@ public:
   std::vector<Eigen::VectorXf> GetTargets();
 };
 
-#endif // CSV_IMPORTER_H
+#endif // CPPNNET_CSV_IMPORTER_H

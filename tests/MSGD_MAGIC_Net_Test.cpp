@@ -1,7 +1,7 @@
 #include "Activation_Functions.h"
 #include "Normalizer.h"
 #include "Neural_Layer.h"
-#include "Neural_Trainer.h"
+#include "MSGD_Neural_Trainer.h"
 #include "CSV_Importer.h"
 #include <iostream>
 #include <chrono>
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
   derv_funs.push_back(Identity_Function_D);
 
   // Create Trainer
-  Neural_Trainer trainer(layer2, derv_funs);
+  MSGD_Neural_Trainer trainer(layer2, derv_funs);
 
   // Train
   std::cout << "Starting to Train" << std::endl;

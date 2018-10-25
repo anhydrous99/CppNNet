@@ -1,5 +1,10 @@
-#ifndef NEURAL_LAYER_H
-#define NEURAL_LAYER_H
+//
+// Created by Armando Herrera III
+// Structure for a neuron layer of a Network
+//
+
+#ifndef CPPNNET_NEURAL_LAYER_H
+#define CPPNNET_NEURAL_LAYER_H
 
 #include <functional>
 #include <memory>
@@ -85,6 +90,8 @@ public:
   Evector GetBiases() { return _b; }
 
   friend class Neural_Trainer;
+
+  friend class MSGD_Neural_Trainer;
 };
 
-#endif // NEURAL_LAYER_H
+#endif // CPPNNET_NEURAL_LAYER_H
