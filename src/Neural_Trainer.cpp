@@ -157,10 +157,13 @@ void Neural_Trainer::train_batch(const std::vector<Evector> &s, const std::vecto
   for (unsigned long m = 0; m < M; m++) {
     std::shared_ptr<Neural_Layer> current_ptr = _neur_ptrs[m];
     float aq = _learning_rate / Q;
-    // Calculate new weights
-    current_ptr->_w -= aq * sa_sum[m];
-    // Calculate new biases
-    current_ptr->_b -= aq * s_sum[m];
+#pragma omp critical (sgd_train_batch)
+    {
+      // Calculate new weights
+      current_ptr->_w -= aq * sa_sum[m];
+      // Calculate new biases
+      current_ptr->_b -= aq * s_sum[m];
+    }
   }
 }
 
