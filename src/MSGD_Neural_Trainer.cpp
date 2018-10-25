@@ -165,11 +165,13 @@ void MSGD_Neural_Trainer::train_batch(const std::vector<Evector> &s, const std::
   for (unsigned long m = 0; m < M; m++) {
     std::shared_ptr<Neural_Layer> current_ptr = _neur_ptrs[m];
     float aq = _learning_rate / Q;
-    // Calculate new weights
+    // Calculate new weights & biases
     past_weights[m] = _momentum_constant * past_weights[m] - aq * sa_sum[m];
-    current_ptr->_w += past_weights[m];
-    // Calculate new biases
     past_biases[m] = _momentum_constant * past_biases[m] - aq * s_sum[m];
-    current_ptr->_b += past_biases[m];
+#pragma omp critical (msgd_train_batch)
+    {
+      current_ptr->_w += past_weights[m];
+      current_ptr->_b += past_biases[m];
+    }
   }
 }
