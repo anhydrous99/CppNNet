@@ -28,13 +28,13 @@ private:
 
   void ObtainData();
 
-  std::string String_Downloader();
-
   struct MemoryStruct Binary_Downloader();
 
   int doinflate(const MemoryStruct *src, MemoryStruct *dst);
 
   void parse(std::string &to_parse);
+
+  void zerr(int ret);
 
 public:
   CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets);

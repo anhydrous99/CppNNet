@@ -5,6 +5,14 @@
 #include <fstream>
 #include <zlib.h>
 
+#if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
+#  include <fcntl.h>
+#  include <io.h>
+#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
+#else
+#  define SET_BINARY_MODE(file)
+#endif
+
 #define CHUNK 16384
 
 CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets) {
@@ -35,45 +43,61 @@ CSV_Importer::~CSV_Importer() {
 
 void CSV_Importer::ObtainData() {
   int len = _filename.length();
-  if (len > 3) {
-    if (_filename.substr(len - 7 - 1, 7) == ".csv.gz") {
-      // TODO if file is compressed, download, decompress it, and add to _data
-    }
-  }
-
+  bool gotten = false;
+  MemoryStruct mem;
   if (len > 4) {
     if (_filename.substr(0, 4) == "http") {
-      std::string input_string = String_Downloader();
-      parse(input_string);
-      _hasdata = true;
-      return;
+      std::cout << " Downloading File: " << _filename << std::endl;
+      mem = Binary_Downloader();
+      gotten = true;
     }
   }
 
-  std::ifstream file(_filename);
-  std::string tmp;
-  std::string line;
-  if (file.is_open()) {
-    int i = 0;
-    while (getline(file, line)) {
-      i++;
-      if (i - 1 < _start_idx) continue;
+  if (!gotten) {
+    std::ifstream fin(_filename, std::ios::in | std::ios::binary);
+    if (fin) {
+      fin.seekg(0, fin.end);
+      mem.size = static_cast<size_t>(fin.tellg());
+      fin.seekg(0, fin.beg);
+      mem.memory = (unsigned char *) malloc(mem.size * sizeof(unsigned char));
 
-      std::stringstream ss(line);
-      while (std::getline(ss, tmp, _delim)) {
-        _data.push_back(tmp);
+      std::cout << " Reading File: " << _filename << std::endl;
+      // read data as a block
+      fin.read((char *) mem.memory, mem.size);
+
+      if (!fin) {
+        std::cerr << "Error: only " << fin.gcount() << " could be read";
+        delete[] mem.memory;
+        fin.close();
+        return;
       }
+      fin.close();
     }
-    _hasdata = true;
-    file.close();
-  } else
-    std::cout << "Unable to open file " << _filename << std::endl;
-}
+  }
 
-/* Used by CSV_Importer to put the web source into a string type */
-static size_t String_WriteCallback(void *contents, size_t size, size_t nmemb, void *userp) {
-  ((std::string *) userp)->append((char *) contents, size * nmemb);
-  return size * nmemb;
+  if (len > 8) {
+    if (_filename.substr(len - 7 - 1, 7) == ".csv.gz") {
+      MemoryStruct to;
+      to.memory = (unsigned char *) malloc(1);
+      to.size = 0;
+
+      int ret = doinflate(&mem, &to);
+      if (ret != Z_OK) {
+        zerr(ret);
+        return;
+      }
+
+      // move to to mem
+      delete[] mem.memory;
+      mem.memory = to.memory;
+      mem.size = to.size;
+    }
+  }
+
+  std::string buffer((char *) mem.memory, mem.size);
+  parse(buffer);
+  _hasdata = true;
+  delete[] mem.memory;
 }
 
 /* call back for binary files */
@@ -124,41 +148,6 @@ static int older_progress(void *p, double dltotal, double dlnow, double ultotal,
                        static_cast<curl_off_t>(ultotal), static_cast<curl_off_t>(ulnow));
 }
 
-std::string CSV_Importer::String_Downloader() {
-  CURL *curl;
-  CURLcode res;
-  std::string readBuffer;
-  struct myprogress prog;
-  curl = curl_easy_init();
-  if (curl) {
-    _curlinit = true;
-    curl_easy_setopt(curl, CURLOPT_URL, _filename.c_str());
-    curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl/1.0");
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, String_WriteCallback);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-    // for older libcurls
-    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, older_progress);
-    curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, &prog);
-    // for newer libcurls
-#if LIBCURL_VERSION_NUM >= 0x072000
-    curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, progress_func);
-    curl_easy_setopt(curl, CURLOPT_XFERINFODATA, &prog);
-#endif
-    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
-    res = curl_easy_perform(curl);
-    /* Check for errors */
-    if (res != CURLE_OK)
-      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
-
-    /* always cleanup */
-    curl_easy_cleanup(curl);
-  }
-  std::cout << std::endl;
-  return readBuffer;
-}
-
 MemoryStruct CSV_Importer::Binary_Downloader() {
   CURL *curl;
   CURLcode res;
@@ -193,6 +182,7 @@ MemoryStruct CSV_Importer::Binary_Downloader() {
     curl_easy_cleanup(curl);
   }
   std::cout << std::endl;
+  return chunk;
 }
 
 int CSV_Importer::doinflate(const MemoryStruct *src, MemoryStruct *dst) {
@@ -276,6 +266,29 @@ void CSV_Importer::parse(std::string &to_parse) {
     while (std::getline(ss, tmp, _delim)) {
       _data.push_back(tmp);
     }
+  }
+}
+
+void CSV_Importer::zerr(int ret) {
+  std::cerr << "CSV_Importer: ";
+  switch (ret) {
+    case Z_ERRNO:
+      std::cerr << "Error reading from mem:\n";
+      break;
+    case Z_STREAM_ERROR:
+      std::cerr << "Invalid compression level\n";
+      break;
+    case Z_DATA_ERROR:
+      std::cerr << "Invalid or incomplete deflate data\n";
+      break;
+    case Z_MEM_ERROR:
+      std::cerr << "out of memory\n";
+      break;
+    case Z_VERSION_ERROR:
+      std::cerr << "zlib version mismatch\n";
+      break;
+    default:
+      std::cerr << "Unknown Error\n";
   }
 }
 
