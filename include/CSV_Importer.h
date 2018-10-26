@@ -10,6 +10,12 @@
 #include <string>
 #include <vector>
 
+typedef struct MemoryStruct MemoryStruct;
+struct MemoryStruct {
+  unsigned char *memory;
+  size_t size;
+};
+
 class CSV_Importer {
 private:
   std::string _filename;
@@ -22,7 +28,11 @@ private:
 
   void ObtainData();
 
-  std::string Downloader();
+  std::string String_Downloader();
+
+  struct MemoryStruct Binary_Downloader();
+
+  int doinflate(const MemoryStruct *src, MemoryStruct *dst);
 
   void parse(std::string &to_parse);
 
