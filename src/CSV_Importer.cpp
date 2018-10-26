@@ -215,7 +215,7 @@ int CSV_Importer::doinflate(const MemoryStruct *src, MemoryStruct *dst) {
   /* decompress until deflate stream ends or end of length */
   int i = 0;
   do {
-    std::memcpy(in, (const void *) (src->memory[i * CHUNK]), CHUNK);
+    memcpy(in, (const void *) (src->memory + i * CHUNK), CHUNK);
     strm.avail_in = CHUNK;
     if (strm.avail_in == 0)
       break;
@@ -258,7 +258,7 @@ int CSV_Importer::doinflate(const MemoryStruct *src, MemoryStruct *dst) {
     } while (strm.avail_out == 0);
     i++;
     /* done when inflate() says it's done */
-  } while (strm.avail_out != Z_STREAM_END);
+  } while (ret != Z_STREAM_END);
 
   (void) inflateEnd(&strm);
   return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
