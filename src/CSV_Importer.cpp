@@ -21,9 +21,19 @@ CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_
   _sot = size_of_targets;
 }
 
+CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, bool reverse) :
+    CSV_Importer(filename, size_of_samples, size_of_targets) {
+  _reverse = reverse;
+}
+
 CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, char delimiter) :
     CSV_Importer(filename, size_of_samples, size_of_targets) {
   _delim = delimiter;
+}
+
+CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, char delimiter,
+                           bool reverse) : CSV_Importer(filename, size_of_samples, size_of_targets, delimiter) {
+  _reverse = reverse;
 }
 
 CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx) {
@@ -31,9 +41,20 @@ CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_
 }
 
 CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx,
+                           bool reverse) : CSV_Importer(filename, size_of_samples, size_of_targets, start_idx) {
+  _reverse = reverse;
+}
+
+CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx,
                            char delimiter) :
     CSV_Importer(filename, size_of_samples, size_of_targets, start_idx) {
   _delim = delimiter;
+}
+
+CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx,
+                           char delimiter, bool reverse) : CSV_Importer(filename, size_of_samples, size_of_targets,
+                                                                        start_idx, delimiter) {
+  _reverse = reverse;
 }
 
 CSV_Importer::~CSV_Importer() {
@@ -307,11 +328,20 @@ std::vector<Eigen::VectorXf> CSV_Importer::GetSamples() {
 
   std::vector<Eigen::VectorXf> output;
   int s = _sof + _sot;
-  for (unsigned long i = 0, sizei = _data.size() / s; i < sizei; i++) {
-    Eigen::VectorXf nm(_sof);
-    for (int j = 0, sizej = _sof; j < sizej; j++)
-      nm[j] = std::stof(_data[i * s + j]);
-    output.push_back(nm);
+  if (!_reverse) {
+    for (unsigned long i = 0, sizei = _data.size() / s; i < sizei; i++) {
+      Eigen::VectorXf nm(_sof);
+      for (int j = 0, sizej = _sof; j < sizej; j++)
+        nm[j] = std::stof(_data[i * s + j]);
+      output.push_back(nm);
+    }
+  } else {
+    for (unsigned long i = 0, sizei = _data.size() / s; i < sizei; i++) {
+      Eigen::VectorXf nm(_sof);
+      for (int j = _sof; j < s; j++)
+        nm[j - _sof] = std::stof(_data[i * s + j]);
+      output.push_back(nm);
+    }
   }
   return output;
 }
@@ -322,11 +352,20 @@ std::vector<Eigen::VectorXf> CSV_Importer::GetTargets() {
 
   std::vector<Eigen::VectorXf> output;
   int s = _sof + _sot;
-  for (unsigned long i = 0, sizei = _data.size() / s; i < sizei; i++) {
-    Eigen::VectorXf nm(_sot);
-    for (int j = _sof; j < s; j++)
-      nm[j - _sof] = std::stof(_data[i * s + j]);
-    output.push_back(nm);
+  if (!_reverse) {
+    for (unsigned long i = 0, sizei = _data.size() / s; i < sizei; i++) {
+      Eigen::VectorXf nm(_sot);
+      for (int j = _sof; j < s; j++)
+        nm[j - _sof] = std::stof(_data[i * s + j]);
+      output.push_back(nm);
+    }
+  } else {
+    for (unsigned long i = 0, sizei = _data.size() / s; i < sizei; i++) {
+      Eigen::VectorXf nm(_sof);
+      for (int j = 0, sizej = _sof; j < sizej; j++)
+        nm[j] = std::stof(_data[i * s + j]):
+      output.push_back(nm);
+    }
   }
   return output;
 }

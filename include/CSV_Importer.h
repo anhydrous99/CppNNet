@@ -22,6 +22,7 @@ private:
   char _delim = ',';
   bool _hasdata = false;
   bool _curlinit = false;
+  bool _reverse = false;
   int _sof, _sot;
   int _start_idx = 0;
   std::vector<std::string> _data;
@@ -39,11 +40,20 @@ private:
 public:
   CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets);
 
+  CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, bool reverse);
+
   CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, char delimiter);
+
+  CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, char delimiter, bool reverse);
 
   CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx);
 
+  CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx, bool reverse);
+
   CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx, char delimiter);
+
+  CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx, char delimiter,
+               bool reverse);
 
   ~CSV_Importer();
 
