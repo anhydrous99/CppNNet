@@ -30,6 +30,4 @@ add_executable(MSGD_MAGIC_Net_Test MSGD_MAGIC_Net_Test.cpp)
 target_link_libraries(MSGD_MAGIC_Net_Test CppNNet)
 add_test(NAME MSGD_MAGICNetTest COMMAND MSGD_MAGIC_Net_Test)
 
-add_executable(Iris_Dataset_gz_Test Iris_Dataset_gz_Test.cpp)
-target_link_libraries(Iris_Dataset_gz_Test CppNNet)
-add_test(NAME IrisDatasetGZTest COMMAND Iris_Dataset_gz_Test ${CMAKE_SOURCE_DIR}/training_data/iris_dataset.csv.gz)
+add_test(NAME IrisDatasetGZTest COMMAND Iris_Dataset_Test ${CMAKE_SOURCE_DIR}/training_data/iris_dataset.csv.gz)
