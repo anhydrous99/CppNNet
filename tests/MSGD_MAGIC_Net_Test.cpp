@@ -18,7 +18,6 @@ int main(int argc, char *argv[]) {
 
   // Import Data
   std::string path = "https://s3.amazonaws.com/files.themadphysicist.com/magic_data.csv";
-  std::cout << "Downloading data from: " << path << std::endl;
   CSV_Importer imp(path, inp, out);
   std::vector<Evector> samples = imp.GetSamples();
   std::vector<Evector> targets = imp.GetTargets();
