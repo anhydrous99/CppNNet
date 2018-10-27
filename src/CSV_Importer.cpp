@@ -92,12 +92,13 @@ void CSV_Importer::ObtainData() {
         fin.close();
         return;
       }
+      gotten = true;
       fin.close();
     }
   }
 
   if (len > 8) {
-    if (_filename.substr(len - 7 - 1, 7) == ".csv.gz") {
+    if (_filename.substr(len - 7) == ".csv.gz") {
       MemoryStruct to;
       to.memory = (unsigned char *) malloc(1);
       to.size = 0;
@@ -363,7 +364,7 @@ std::vector<Eigen::VectorXf> CSV_Importer::GetTargets() {
     for (unsigned long i = 0, sizei = _data.size() / s; i < sizei; i++) {
       Eigen::VectorXf nm(_sof);
       for (int j = 0, sizej = _sof; j < sizej; j++)
-        nm[j] = std::stof(_data[i * s + j]):
+        nm[j] = std::stof(_data[i * s + j]);
       output.push_back(nm);
     }
   }
