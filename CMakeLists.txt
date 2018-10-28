@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8.9)
 
+cmake_policy(SET CMP0054 NEW)
+
 include("cmake/HunterGate.cmake")
 HunterGate(
         URL "https://github.com/ruslo/hunter/archive/v0.23.33.tar.gz"
@@ -10,8 +12,10 @@ project(CppNNet)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_BUILD_TYPE DEBUG)
 
+hunter_add_package(ZLIB)
 hunter_add_package(Eigen)
 hunter_add_package(CURL)
+find_package(ZLIB CONFIG REQUIRED)
 find_package(Eigen3 CONFIG REQUIRED)
 find_package(CURL CONFIG REQUIRED)
 
