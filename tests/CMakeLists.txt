@@ -31,3 +31,6 @@ target_link_libraries(MSGD_MAGIC_Net_Test CppNNet)
 add_test(NAME MSGD_MAGICNetTest COMMAND MSGD_MAGIC_Net_Test)
 
 add_test(NAME IrisDatasetGZTest COMMAND Iris_Dataset_Test ${CMAKE_SOURCE_DIR}/training_data/iris_dataset.csv.gz)
+
+add_executable(HIGGS HIGGS.cpp)
+target_link_libraries(HIGGS CppNNet)

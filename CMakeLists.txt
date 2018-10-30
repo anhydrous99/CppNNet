@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.9)
 
 cmake_policy(SET CMP0054 NEW)
+cmake_policy(SET CMP0074 NEW)
 
 include("cmake/HunterGate.cmake")
 HunterGate(
@@ -11,6 +12,8 @@ HunterGate(
 project(CppNNet)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_BUILD_TYPE DEBUG)
+
+#set(CMAKE_CXX_FLAGS_RELEASE "-g ${CMAKE_CXX_FLAGS_RELEASE}")
 
 hunter_add_package(ZLIB)
 hunter_add_package(Eigen)

@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <random>
+#include <iterator>
 #include <cmath>
 
 Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, function activation_function) :
