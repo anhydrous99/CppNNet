@@ -76,13 +76,13 @@ Neural_Layer::Neural_Layer(int nneurons, int ninputs, bool normalize) : _w(nneur
 std::vector<Evector> Neural_Layer::normalize(std::vector<Evector> &input) {
   unsigned long n = input.size();
   // Mini-batch mean
-  Evector mu(input[0].size());
+  Evector mu = Evector::Zero(input[0].size());
   for (auto &it : input)
     mu += it;
   mu /= n;
 
   // Mini-batch variance
-  Evector sigma2(input[0].size());
+  Evector sigma2 = Evector::Zero(input[0].size());
   for (auto &it : input)
     sigma2 += (it - mu).array().square().matrix();
   sigma2 /= n;
