@@ -15,6 +15,10 @@ typedef std::function<float(float)> function;
 typedef Eigen::MatrixXf Ematrix;
 typedef Eigen::VectorXf Evector;
 
+struct norm_data {
+  float alpha = 0, beta = 0, epsilon = 0.00001;
+};
+
 class Neural_Layer : public std::enable_shared_from_this<Neural_Layer> {
 private:
   typedef std::shared_ptr<Neural_Layer> Neural_Ptr;
@@ -28,6 +32,10 @@ private:
   // Pointer to Previous Layer
   Neural_Ptr _prev_layer;
 
+  // Normalization data
+  float _alpha, _beta, _epsilon = 0.00001;
+  bool _normalize = false;
+
   // Function to get vector of pointer to all layers
   std::vector<Neural_Ptr> GetVecPtrs();
 
@@ -36,23 +44,27 @@ private:
 
 public:
   // Constructors
-  Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, function activation_function);
+  Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, function activation_function,
+               norm_data *dat = nullptr);
 
-  Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer);
+  Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, norm_data *dat = nullptr);
 
-  Neural_Layer(Ematrix Weights, Evector Bias, function activation_function);
+  Neural_Layer(Ematrix Weights, Evector Bias, function activation_function, norm_data *dat = nullptr);
 
-  Neural_Layer(Ematrix Weights, Evector Bias);
+  Neural_Layer(Ematrix Weights, Evector Bias, norm_data *dat = nullptr);
 
-  Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, function activation_function);
+  Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, function activation_function,
+               bool normalize = false);
 
-  Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer);
+  Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, bool normalize = false);
 
-  Neural_Layer(int nneurons, int ninputs, function activation_function);
+  Neural_Layer(int nneurons, int ninputs, function activation_function, bool normalize = false);
 
-  Neural_Layer(int nneurons, int ninputs);
+  Neural_Layer(int nneurons, int ninputs, bool normalize = false);
 
   ~Neural_Layer() = default;
+
+  std::vector<Evector> normalize(std::vector<Evector> &input);
 
   Evector feedforward(Evector input);
 

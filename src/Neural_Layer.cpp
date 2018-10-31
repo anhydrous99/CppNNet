@@ -5,42 +5,50 @@
 #include <iterator>
 #include <cmath>
 
-Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, function activation_function) :
-    Neural_Layer(Weights, Bias, previous_layer) {
+Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, function activation_function,
+                           norm_data *dat) :
+    Neural_Layer(Weights, Bias, previous_layer, dat) {
   _activ_func = activation_function;
 }
 
-Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer) :
-    Neural_Layer(Weights, Bias) {
+Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, norm_data *dat) :
+    Neural_Layer(Weights, Bias, dat) {
   _prev_layer = previous_layer;
 }
 
-Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, function activation_function) :
-    Neural_Layer(Weights, Bias) {
+Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, function activation_function, norm_data *dat) :
+    Neural_Layer(Weights, Bias, dat) {
   _activ_func = activation_function;
 }
 
-Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias) {
+Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, norm_data *dat) {
   _w = Weights;
   _b = Bias;
+
+  if (dat != nullptr) {
+    _normalize = true;
+    _alpha = dat->alpha;
+    _beta = dat->beta;
+  }
 }
 
-Neural_Layer::Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, function activation_function) :
-    Neural_Layer(nneurons, ninputs, previous_layer) {
+Neural_Layer::Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, function activation_function,
+                           bool normalize) :
+    Neural_Layer(nneurons, ninputs, previous_layer, normalize) {
   _activ_func = activation_function;
 }
 
-Neural_Layer::Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer) :
-    Neural_Layer(nneurons, ninputs) {
+Neural_Layer::Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, bool normalize) :
+    Neural_Layer(nneurons, ninputs, normalize) {
   _prev_layer = previous_layer;
 }
 
-Neural_Layer::Neural_Layer(int nneurons, int ninputs, function activation_function) :
-    Neural_Layer(nneurons, ninputs) {
+Neural_Layer::Neural_Layer(int nneurons, int ninputs, function activation_function, bool normalize) :
+    Neural_Layer(nneurons, ninputs, normalize) {
   _activ_func = activation_function;
 }
 
-Neural_Layer::Neural_Layer(int nneurons, int ninputs) : _w(nneurons, ninputs), _b(nneurons) {
+Neural_Layer::Neural_Layer(int nneurons, int ninputs, bool normalize) : _w(nneurons, ninputs), _b(nneurons) {
   // Obtain seed
   std::random_device rd;
   // Standard merseen_twister_engine
@@ -54,7 +62,38 @@ Neural_Layer::Neural_Layer(int nneurons, int ninputs) : _w(nneurons, ninputs), _
   // Fill the bias with random numbers
   for (long i = 0, size = _b.size(); i < size; i++)
     *(_b.data() + i) = dis(gen);
+
+  if (normalize) {
+    _normalize = true;
+    _alpha = dis(gen);
+    _beta = dis(gen);
+  }
 }
+
+// Utility function
+
+
+std::vector<Evector> Neural_Layer::normalize(std::vector<Evector> &input) {
+  unsigned long n = input.size();
+  // Mini-batch mean
+  Evector mu(input[0].size());
+  for (auto &it : input)
+    mu += it;
+  mu /= n;
+
+  // Mini-batch variance
+  Evector sigma2(input[0].size());
+  for (auto &it : input)
+    sigma2 += (it - mu).array().square().matrix();
+  sigma2 /= n;
+
+  // Normalize
+  std::vector<Evector> output;
+  for (auto &it : input)
+    output.emplace_back((_alpha * (it - mu).array() / (_epsilon + sigma2.array()) + _beta).matrix());
+  return output;
+}
+
 
 Evector Neural_Layer::feedforward(Evector input) {
   Evector a = (_prev_layer) ? _prev_layer->feedforward(input) : input;
