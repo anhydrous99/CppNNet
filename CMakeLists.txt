@@ -1,16 +1,13 @@
 cmake_minimum_required(VERSION 2.8.9)
 
-if (POLICY CMP0054)
-    cmake_policy(SET CMP0054 NEW)
-endif ()
 if (POLICY CMP0074)
     cmake_policy(SET CMP0074 NEW)
 endif ()
 
 include("cmake/HunterGate.cmake")
 HunterGate(
-        URL "https://github.com/ruslo/hunter/archive/v0.23.33.tar.gz"
-        SHA1 "acbf4b9b77b5a0160adc1da1cdda35f64b14196a"
+        URL "https://github.com/ruslo/hunter/archive/v0.23.44.tar.gz"
+        SHA1 "c4cfcc0cd39fdae8de08f6205b7f34cab4a7ba79"
 )
 
 project(CppNNet)
@@ -27,9 +24,11 @@ option(BUILD_TEST "Build the Tests" ON)
 hunter_add_package(ZLIB)
 hunter_add_package(Eigen)
 hunter_add_package(CURL)
+hunter_add_package(RapidJSON)
 find_package(ZLIB CONFIG REQUIRED)
 find_package(Eigen3 CONFIG REQUIRED)
 find_package(CURL CONFIG REQUIRED)
+find_package(RapidJSON CONFIG REQUIRED)
 
 find_package(OpenMP REQUIRED)
 

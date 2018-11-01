@@ -10,4 +10,5 @@ target_link_libraries(CppNNet
         Eigen3::Eigen
         CURL::libcurl
         ZLIB::zlib
+        RapidJSON::rapidjson
         )
