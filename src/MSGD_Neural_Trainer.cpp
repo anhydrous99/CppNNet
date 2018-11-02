@@ -4,26 +4,25 @@
 
 #include "MSGD_Neural_Trainer.h"
 
-MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr,
-                                         std::vector<function> derv_fun) : Neural_Trainer(neural_ptr, derv_fun) {
+MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr) : Neural_Trainer(
+    neural_ptr) {
   _init();
 }
 
-MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr,
-                                         std::vector<function> derv_fun, learning_momentum lrm) : Neural_Trainer(
-    neural_ptr, derv_fun, lrm.learning_rate) {
+MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, learning_momentum lrm)
+    : Neural_Trainer(
+    neural_ptr, lrm.learning_rate) {
   _momentum_constant = lrm.momentum;
   _init();
 }
 
-MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, std::vector<function> derv_fun) :
-    Neural_Trainer(end_neural_ptr, derv_fun) {
+MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr) :
+    Neural_Trainer(end_neural_ptr) {
   _init();
 }
 
-MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, std::vector<function> derv_fun,
-                                         learning_momentum lrm) : Neural_Trainer(end_neural_ptr, derv_fun,
-                                                                                 lrm.learning_rate) {
+MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr,
+                                         learning_momentum lrm) : Neural_Trainer(end_neural_ptr, lrm.learning_rate) {
   _momentum_constant = lrm.momentum;
   _init();
 }

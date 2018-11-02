@@ -1,4 +1,3 @@
-#include "Activation_Functions.h"
 #include "Normalizer.h"
 #include "Neural_Layer.h"
 #include "Neural_Trainer.h"
@@ -13,7 +12,7 @@ int main(int argc, char *argv[]) {
   int out = 2;
 
   // Create Layers
-  std::shared_ptr<Neural_Layer> layer1 = std::make_shared<Neural_Layer>(20, inp, Logistic_Function);
+  std::shared_ptr<Neural_Layer> layer1 = std::make_shared<Neural_Layer>(20, inp, activation_function::Logistic);
   std::shared_ptr<Neural_Layer> layer2 = std::make_shared<Neural_Layer>(out, 20, layer1);
 
   // Import Data
@@ -26,13 +25,8 @@ int main(int argc, char *argv[]) {
   Normalizer samplen(samples, 0, 1);
   std::vector<Evector> normed_samples = samplen.get_batch_norm(samples);
 
-  // Create Derivative Function Vector
-  std::vector<function> derv_funs;
-  derv_funs.push_back(Logistic_Function_D);
-  derv_funs.push_back(Identity_Function_D);
-
   // Create Trainer
-  Neural_Trainer trainer(layer2, derv_funs);
+  Neural_Trainer trainer(layer2);
 
   // Train
   std::cout << "Starting to Train" << std::endl;

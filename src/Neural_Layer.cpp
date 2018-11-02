@@ -1,14 +1,16 @@
 #include "Neural_Layer.h"
+#include "Activation_Functions.h"
 
 #include <algorithm>
 #include <random>
 #include <iterator>
 #include <cmath>
 
-Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, function activation_function,
+Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, activation_function func,
                            norm_data *dat) :
     Neural_Layer(Weights, Bias, previous_layer, dat) {
-  _activ_func = activation_function;
+  _func = func;
+  _activ_func = Get_Activation_Function(func);
 }
 
 Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, norm_data *dat) :
@@ -16,9 +18,10 @@ Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_la
   _prev_layer = previous_layer;
 }
 
-Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, function activation_function, norm_data *dat) :
+Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, activation_function func, norm_data *dat) :
     Neural_Layer(Weights, Bias, dat) {
-  _activ_func = activation_function;
+  _func = func;
+  _activ_func = Get_Activation_Function(func);
 }
 
 Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, norm_data *dat) {
@@ -32,10 +35,11 @@ Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, norm_data *dat) {
   }
 }
 
-Neural_Layer::Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, function activation_function,
+Neural_Layer::Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, activation_function func,
                            bool normalize) :
     Neural_Layer(nneurons, ninputs, previous_layer, normalize) {
-  _activ_func = activation_function;
+  _func = func;
+  _activ_func = Get_Activation_Function(func);
 }
 
 Neural_Layer::Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, bool normalize) :
@@ -43,9 +47,10 @@ Neural_Layer::Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer,
   _prev_layer = previous_layer;
 }
 
-Neural_Layer::Neural_Layer(int nneurons, int ninputs, function activation_function, bool normalize) :
+Neural_Layer::Neural_Layer(int nneurons, int ninputs, activation_function func, bool normalize) :
     Neural_Layer(nneurons, ninputs, normalize) {
-  _activ_func = activation_function;
+  _func = func;
+  _activ_func = Get_Activation_Function(func);
 }
 
 Neural_Layer::Neural_Layer(int nneurons, int ninputs, bool normalize) : _w(nneurons, ninputs), _b(nneurons) {
@@ -258,4 +263,47 @@ float Neural_Layer::bic(const std::vector<Evector> &input, const std::vector<Eve
   }
 
   return sizei * std::log(SSE / sizei) + p * std::log(static_cast<float>(sizei));
+}
+
+
+function Neural_Layer::Get_Activation_Function(activation_function func) {
+  switch (func) {
+    case activation_function::Identity:
+      return Identity_Function;
+    case activation_function::Logistic:
+      return Logistic_Function;
+    case activation_function::HyperbolicTan:
+      return HyperbolicTan_Function;
+    case activation_function::ArcTan:
+      return ArcTan_Function;
+    case activation_function::Sin:
+      return Sin_Function;
+    case activation_function::Gaussian:
+      return Gaussian_Function;
+  }
+}
+
+function Neural_Layer::Get_Activation_Function() {
+  return Get_Activation_Function(_func);
+}
+
+function Neural_Layer::Get_Derivative_Function(activation_function func) {
+  switch (func) {
+    case activation_function::Identity:
+      return Identity_Function_D;
+    case activation_function::Logistic:
+      return Logistic_Function_D;
+    case activation_function::HyperbolicTan:
+      return HyperbolicTan_Function_D;
+    case activation_function::ArcTan:
+      return ArcTan_Function_D;
+    case activation_function::Sin:
+      return Sin_Function_D;
+    case activation_function::Gaussian:
+      return Gaussian_Function_D;
+  }
+}
+
+function Neural_Layer::Get_Derivative_Function() {
+  return Get_Derivative_Function(_func);
 }

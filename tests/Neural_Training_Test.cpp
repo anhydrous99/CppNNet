@@ -1,4 +1,3 @@
-#include "Activation_Functions.h"
 #include "Neural_Layer.h"
 #include "Neural_Trainer.h"
 #include "Normalizer.h"
@@ -12,7 +11,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Create Layers
-  std::shared_ptr<Neural_Layer> layer1 = std::make_shared<Neural_Layer>(5, 1, HyperbolicTan_Function);
+  std::shared_ptr<Neural_Layer> layer1 = std::make_shared<Neural_Layer>(5, 1, activation_function::HyperbolicTan);
   std::shared_ptr<Neural_Layer> layer2 = std::make_shared<Neural_Layer>(1, 5, layer1);
 
   // Import Data
@@ -27,13 +26,8 @@ int main(int argc, char *argv[]) {
   std::vector<Evector> normed_samples = samplen.get_batch_norm(samples);
   std::vector<Evector> normed_targets = targetn.get_batch_norm(targets);
 
-  // Create Derivative Function Vector
-  std::vector<function> derv_funs;
-  derv_funs.push_back(HyperbolicTan_Function_D);
-  derv_funs.push_back(Identity_Function_D);
-
   // Create Trainer
-  Neural_Trainer trainer(layer2, derv_funs);
+  Neural_Trainer trainer(layer2);
 
   // Train
   for (int i = 0, sizei = 2000; i < sizei; i++) {

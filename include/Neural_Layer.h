@@ -19,6 +19,10 @@ struct norm_data {
   float alpha = 0, beta = 0, epsilon = 0.00001;
 };
 
+enum activation_function {
+  Identity, Logistic, HyperbolicTan, ArcTan, Sin, Gaussian
+};
+
 class Neural_Layer : public std::enable_shared_from_this<Neural_Layer> {
 private:
   typedef std::shared_ptr<Neural_Layer> Neural_Ptr;
@@ -28,6 +32,7 @@ private:
   // Bias Vector
   Evector _b;
   // Activation Function
+  activation_function _func = activation_function::Identity;
   function _activ_func = [](float x) { return x; };
   // Pointer to Previous Layer
   Neural_Ptr _prev_layer;
@@ -36,29 +41,26 @@ private:
   float _alpha, _beta, _epsilon = 0.00001;
   bool _normalize = false;
 
-  // Function to get vector of pointer to all layers
-  std::vector<Neural_Ptr> GetVecPtrs();
-
   // Gets the number of weights and biases
   long parameter_count();
 
 public:
   // Constructors
-  Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, function activation_function,
+  Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, activation_function func,
                norm_data *dat = nullptr);
 
   Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, norm_data *dat = nullptr);
 
-  Neural_Layer(Ematrix Weights, Evector Bias, function activation_function, norm_data *dat = nullptr);
+  Neural_Layer(Ematrix Weights, Evector Bias, activation_function func, norm_data *dat = nullptr);
 
   Neural_Layer(Ematrix Weights, Evector Bias, norm_data *dat = nullptr);
 
-  Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, function activation_function,
+  Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, activation_function func,
                bool normalize = false);
 
   Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, bool normalize = false);
 
-  Neural_Layer(int nneurons, int ninputs, function activation_function, bool normalize = false);
+  Neural_Layer(int nneurons, int ninputs, activation_function func, bool normalize = false);
 
   Neural_Layer(int nneurons, int ninputs, bool normalize = false);
 
@@ -100,6 +102,23 @@ public:
   Ematrix GetWeights() { return _w; }
 
   Evector GetBiases() { return _b; }
+
+  long GetNInputs() { return _w.cols(); }
+
+  long GetNNeurons() { return _w.rows(); }
+
+  // Function to get vector of pointer to all layers
+  std::vector<Neural_Ptr> GetVecPtrs();
+
+  // Gets activation function from activation_function
+  function Get_Activation_Function(activation_function func);
+
+  function Get_Activation_Function();
+
+  // Gets derivative function from activation_function
+  function Get_Derivative_Function(activation_function func);
+
+  function Get_Derivative_Function();
 
   friend class Neural_Trainer;
 

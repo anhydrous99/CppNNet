@@ -15,14 +15,13 @@ protected:
   float _learning_rate = 0.01;
 
 public:
-  Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, std::vector<function> derv_fun);
+  Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr);
 
-  Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, std::vector<function> derv_fun,
-                 float learning_rate);
+  Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, float learning_rate);
 
-  Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, std::vector<function> derv_fun);
+  Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr);
 
-  Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, std::vector<function> derv_fun, float learning_rate);
+  Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, float learning_rate);
 
   ~Neural_Trainer() = default;
 

@@ -1,4 +1,3 @@
-#include "Activation_Functions.h"
 #include "Neural_Layer.h"
 #include "Normalizer.h"
 #include <iostream>
@@ -21,7 +20,7 @@ int main() {
   // Declare Activation Functions for 1st layer
   // From Activation_Functions.h
   // Neural_Layer has linear function built in as default
-  function activ_func_1st_layer = HyperbolicTan_Function;
+  activation_function activ_func_1st_layer = activation_function::HyperbolicTan;
 
   // Create Layers
   std::shared_ptr<Neural_Layer> layer1(new Neural_Layer(Weights_Layer1,

@@ -17,26 +17,27 @@ std::vector<int> Neural_Trainer::shuffle_indices(int nindices) {
   return indices;
 }
 
-Neural_Trainer::Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptrs,
-                               std::vector<function> derv_funs) {
+Neural_Trainer::Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptrs) {
   _neur_ptrs = neural_ptrs;
-  _daf = derv_funs;
+  unsigned long M = neural_ptrs.size();
+  for (unsigned long m = 0; m < M; m++)
+    _daf.push_back(neural_ptrs[m]->Get_Derivative_Function());
 }
 
-Neural_Trainer::Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptrs,
-                               std::vector<function> derv_funs, float learning_rate) : Neural_Trainer(neural_ptrs,
-                                                                                                      derv_funs) {
+Neural_Trainer::Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptrs, float learning_rate) :
+    Neural_Trainer(neural_ptrs) {
   _learning_rate = learning_rate;
 }
 
-Neural_Trainer::Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, std::vector<function> derv_funs) {
+Neural_Trainer::Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr) {
   _neur_ptrs = end_neural_ptr->GetVecPtrs();
-  _daf = derv_funs;
+  unsigned long M = _neur_ptrs.size();
+  for (unsigned long m = 0; m < M; m++)
+    _daf.push_back(_neur_ptrs[m]->Get_Derivative_Function());
 }
 
-Neural_Trainer::Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr,
-                               std::vector<function> derv_funs, float learning_rate) :
-    Neural_Trainer(end_neural_ptr, derv_funs) {
+Neural_Trainer::Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, float learning_rate) :
+    Neural_Trainer(end_neural_ptr) {
   _learning_rate = learning_rate;
 }
 

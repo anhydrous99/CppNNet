@@ -23,15 +23,13 @@ protected:
   void _init();
 
 public:
-  MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, std::vector<function> derv_fun);
+  MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr);
 
-  MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, std::vector<function> derv_fun,
-                      learning_momentum lrm);
+  MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, learning_momentum lrm);
 
-  MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, std::vector<function> derv_fun);
+  MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr);
 
-  MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, std::vector<function> derv_fun,
-                      learning_momentum lrm);
+  MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, learning_momentum lrm);
 
   ~MSGD_Neural_Trainer() = default;
 
