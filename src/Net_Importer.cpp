@@ -9,7 +9,6 @@
 
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
-#include "rapidjson/prettywriter.h"
 #include "rapidjson/stringbuffer.h"
 
 Net_Importer::Net_Importer(std::string &filename) : _filename(filename) {
@@ -142,7 +141,7 @@ void Net_Importer::writeNet(std::vector<std::shared_ptr<Neural_Layer>> ptrs) {
 
   /* create string with rapidjson */
   rapidjson::StringBuffer strbuf;
-  rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(strbuf);
+  rapidjson::Writer<rapidjson::StringBuffer> writer(strbuf);
   d.Accept(writer);
 
   writefile(strbuf.GetString());
