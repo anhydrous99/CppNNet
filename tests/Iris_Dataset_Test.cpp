@@ -1,6 +1,7 @@
 #include "Neural_Layer.h"
 #include "Neural_Trainer.h"
 #include "CSV_Importer.h"
+#include "Net_Importer.h"
 #include <iostream>
 #include <chrono>
 
@@ -61,5 +62,15 @@ int main(int argc, char *argv[]) {
             << std::endl;
   std::cout << "Statistics took " << std::chrono::duration_cast<std::chrono::milliseconds>(end2 - end1).count()
             << " milliseconds" << std::endl;
+
+  // Export network
+  Net_Importer exprt("iris_network.json");
+  exprt.writeNet(layer2);
+
+  // Import network
+  std::shared_ptr<Neural_Layer> network2 = exprt.readNet_endptr();
+  mse = network2->mse(samples, targets);
+  std::cout << "imported network MSE: " << mse << std::endl;
+
   return (0.5 < mse);
 }

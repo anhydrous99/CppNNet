@@ -19,6 +19,8 @@ private:
 
 public:
 
+  explicit Net_Importer(std::string filename);
+
   explicit Net_Importer(std::string &filename);
 
   ~Net_Importer() = default;

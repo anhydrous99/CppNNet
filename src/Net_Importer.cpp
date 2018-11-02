@@ -11,6 +11,9 @@
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
 
+Net_Importer::Net_Importer(std::string filename) : _filename(std::move(filename)) {
+}
+
 Net_Importer::Net_Importer(std::string &filename) : _filename(filename) {
 }
 
@@ -63,11 +66,11 @@ std::vector<std::shared_ptr<Neural_Layer>> Net_Importer::readNet_vecptr() {
     assert(weights.IsArray());
     assert(biases.IsArray());
     for (long nn = 0; nn < nneurons; nn++) {
-      rapidjson::Value &weightsrow = layer[nn];
+      rapidjson::Value &weightsrow = weights[nn];
       assert(weightsrow.IsArray());
       for (long ni = 0; ni < ninputs; ni++) {
-        assert(weights[ni].IsFloat());
-        w(nn, ni) = weights[ni].GetFloat();
+        assert(weightsrow[ni].IsFloat());
+        w(nn, ni) = weightsrow[ni].GetFloat();
       }
 
       assert(biases[nn].IsFloat());
@@ -103,6 +106,7 @@ void Net_Importer::writeNet(std::vector<std::shared_ptr<Neural_Layer>> ptrs) {
   rapidjson::Value layers(rapidjson::kArrayType);
   for (unsigned m = 0; m < M; m++) {
     rapidjson::Value layer;
+    layer.SetObject();
     long nneurons = ptrs[m]->GetNNeurons();
     long ninputs = ptrs[m]->GetNInputs();
     /* Add number of neurons in layer */
