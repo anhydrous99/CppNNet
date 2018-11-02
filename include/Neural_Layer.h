@@ -66,7 +66,7 @@ public:
 
   ~Neural_Layer() = default;
 
-  std::vector<Evector> normalize(std::vector<Evector> &input);
+  std::vector<Evector> normalize(const std::vector<Evector> &input);
 
   Evector feedforward(Evector input);
 

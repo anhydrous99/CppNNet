@@ -78,7 +78,7 @@ Neural_Layer::Neural_Layer(int nneurons, int ninputs, bool normalize) : _w(nneur
 // Utility function
 
 
-std::vector<Evector> Neural_Layer::normalize(std::vector<Evector> &input) {
+std::vector<Evector> Neural_Layer::normalize(const std::vector<Evector> &input) {
   unsigned long n = input.size();
   // Mini-batch mean
   Evector mu = Evector::Zero(input[0].size());
@@ -111,10 +111,20 @@ Evector Neural_Layer::feedforward(Evector input) {
 }
 
 std::vector<Evector> Neural_Layer::feedforward_batch(std::vector<Evector> input) {
-  std::vector<Evector> output;
-  for (auto &item: input)
-    output.push_back(feedforward(item));
-  return output;
+  std::vector<Evector> a = (_prev_layer) ? _prev_layer->feedforward_batch(input) : input;
+  std::vector<Evector> n;
+  for (auto &it : a)
+    n.emplace_back(_w * it + _b);
+
+  if (_normalize)
+    n = normalize(n);
+
+  for (auto &it : n) {
+    for (long i = 0, size = it.size(); i < size; i++)
+      it[i] = _activ_func(it[i]);
+  }
+
+  return n;
 }
 
 std::vector<std::shared_ptr<Neural_Layer>> Neural_Layer::GetVecPtrs() {
