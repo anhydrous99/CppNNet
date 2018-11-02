@@ -115,6 +115,8 @@ public:
 
   function Get_Activation_Function();
 
+  activation_function Current_Activation_Function();
+
   // Gets derivative function from activation_function
   function Get_Derivative_Function(activation_function func);
 

@@ -287,6 +287,10 @@ function Neural_Layer::Get_Activation_Function() {
   return Get_Activation_Function(_func);
 }
 
+activation_function Neural_Layer::Current_Activation_Function() {
+  return _func;
+}
+
 function Neural_Layer::Get_Derivative_Function(activation_function func) {
   switch (func) {
     case activation_function::Identity:
