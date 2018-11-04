@@ -11,13 +11,13 @@
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
 
-Net_Importer::Net_Importer(std::string filename) : _filename(std::move(filename)) {
+CppNNet::Net_Importer::Net_Importer(std::string filename) : _filename(std::move(filename)) {
 }
 
-Net_Importer::Net_Importer(std::string &filename) : _filename(filename) {
+CppNNet::Net_Importer::Net_Importer(std::string &filename) : _filename(filename) {
 }
 
-std::string Net_Importer::readfile() {
+std::string CppNNet::Net_Importer::readfile() {
   std::string line;
   std::string full;
   std::ifstream file(_filename);
@@ -29,7 +29,7 @@ std::string Net_Importer::readfile() {
   return full;
 }
 
-void Net_Importer::writefile(std::string content) {
+void CppNNet::Net_Importer::writefile(std::string content) {
   std::ofstream file(_filename);
   if (file.is_open()) {
     file << content;
@@ -37,7 +37,7 @@ void Net_Importer::writefile(std::string content) {
   }
 }
 
-std::vector<std::shared_ptr<Neural_Layer>> Net_Importer::readNet_vecptr() {
+std::vector<std::shared_ptr<CppNNet::Neural_Layer>> CppNNet::Net_Importer::readNet_vecptr() {
   std::string net_str = readfile();
   std::vector<std::shared_ptr<Neural_Layer>> output;
   rapidjson::Document d;
@@ -87,12 +87,12 @@ std::vector<std::shared_ptr<Neural_Layer>> Net_Importer::readNet_vecptr() {
   return output;
 }
 
-std::shared_ptr<Neural_Layer> Net_Importer::readNet_endptr() {
+std::shared_ptr<CppNNet::Neural_Layer> CppNNet::Net_Importer::readNet_endptr() {
   std::vector<std::shared_ptr<Neural_Layer>> ptrs = readNet_vecptr();
   return ptrs[ptrs.size() - 1];
 }
 
-void Net_Importer::writeNet(std::vector<std::shared_ptr<Neural_Layer>> ptrs) {
+void CppNNet::Net_Importer::writeNet(std::vector<std::shared_ptr<CppNNet::Neural_Layer>> ptrs) {
 
   rapidjson::Document d;
   d.SetObject();
@@ -151,7 +151,7 @@ void Net_Importer::writeNet(std::vector<std::shared_ptr<Neural_Layer>> ptrs) {
   writefile(strbuf.GetString());
 }
 
-void Net_Importer::writeNet(std::shared_ptr<Neural_Layer> ptr) {
+void CppNNet::Net_Importer::writeNet(std::shared_ptr<Neural_Layer> ptr) {
   std::vector<std::shared_ptr<Neural_Layer>> ptrs = ptr->GetVecPtrs();
   writeNet(ptrs);
 }

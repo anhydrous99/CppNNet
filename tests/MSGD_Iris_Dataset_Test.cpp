@@ -4,6 +4,8 @@
 #include <iostream>
 #include <chrono>
 
+using namespace CppNNet;
+
 int main(int argc, char *argv[]) {
   if (argc != 2) {
     std::cout << "Error: wrong number of arguments. Exiting...\n";

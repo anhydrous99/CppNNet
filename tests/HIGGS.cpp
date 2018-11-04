@@ -13,6 +13,7 @@
 #pragma float_control( except, on )
 #endif
 
+using namespace CppNNet;
 
 int main(int argc, char *argv[]) {
   if (argc != 2) {

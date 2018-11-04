@@ -10,58 +10,62 @@
 #include <string>
 #include <vector>
 
-typedef struct MemoryStruct MemoryStruct;
-struct MemoryStruct {
-  unsigned char *memory;
-  size_t size;
-};
+namespace CppNNet {
 
-class CSV_Importer {
-private:
-  std::string _filename;
-  char _delim = ',';
-  bool _hasdata = false;
-  bool _curlinit = false;
-  bool _reverse = false;
-  int _sof, _sot;
-  int _start_idx = 0;
-  std::vector<std::string> _data;
+  typedef struct MemoryStruct MemoryStruct;
+  struct MemoryStruct {
+    unsigned char *memory;
+    size_t size;
+  };
 
-  void ObtainData();
+  class CSV_Importer {
+  private:
+    std::string _filename;
+    char _delim = ',';
+    bool _hasdata = false;
+    bool _curlinit = false;
+    bool _reverse = false;
+    int _sof, _sot;
+    int _start_idx = 0;
+    std::vector<std::string> _data;
 
-  struct MemoryStruct Binary_Downloader();
+    void ObtainData();
 
-  int doinflate(const MemoryStruct *src, MemoryStruct *dst);
+    struct MemoryStruct Binary_Downloader();
 
-  void parse(std::string &to_parse);
+    int doinflate(const MemoryStruct *src, MemoryStruct *dst);
 
-  void zerr(int ret);
+    void parse(std::string &to_parse);
 
-public:
-  CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets);
+    void zerr(int ret);
 
-  CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, bool reverse);
+  public:
+    CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets);
 
-  CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, char delimiter);
+    CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, bool reverse);
 
-  CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, char delimiter, bool reverse);
+    CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, char delimiter);
 
-  CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx);
+    CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, char delimiter, bool reverse);
 
-  CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx, bool reverse);
+    CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx);
 
-  CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx, char delimiter);
+    CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx, bool reverse);
 
-  CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx, char delimiter,
-               bool reverse);
+    CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx, char delimiter);
 
-  ~CSV_Importer();
+    CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx, char delimiter,
+                 bool reverse);
 
-  std::vector<std::string> GetData();
+    ~CSV_Importer();
 
-  std::vector<Eigen::VectorXf> GetSamples();
+    std::vector<std::string> GetData();
 
-  std::vector<Eigen::VectorXf> GetTargets();
-};
+    std::vector<Eigen::VectorXf> GetSamples();
+
+    std::vector<Eigen::VectorXf> GetTargets();
+  };
+
+}
 
 #endif // CPPNNET_CSV_IMPORTER_H

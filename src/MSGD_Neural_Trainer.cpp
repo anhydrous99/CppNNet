@@ -4,30 +4,32 @@
 
 #include "MSGD_Neural_Trainer.h"
 
-MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr) : Neural_Trainer(
+CppNNet::MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr)
+    : Neural_Trainer(
     neural_ptr) {
   _init();
 }
 
-MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, learning_momentum lrm)
+CppNNet::MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr,
+                                                  learning_momentum lrm)
     : Neural_Trainer(
     neural_ptr, lrm.learning_rate) {
   _momentum_constant = lrm.momentum;
   _init();
 }
 
-MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr) :
+CppNNet::MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr) :
     Neural_Trainer(end_neural_ptr) {
   _init();
 }
 
-MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr,
-                                         learning_momentum lrm) : Neural_Trainer(end_neural_ptr, lrm.learning_rate) {
+CppNNet::MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr,
+                                                  learning_momentum lrm) : Neural_Trainer(end_neural_ptr, lrm.learning_rate) {
   _momentum_constant = lrm.momentum;
   _init();
 }
 
-void MSGD_Neural_Trainer::_init() {
+void CppNNet::MSGD_Neural_Trainer::_init() {
   unsigned long M = _neur_ptrs.size();
   for (unsigned long m = 0; m < M; m++) {
     _past_weights.emplace_back(Ematrix::Zero(_neur_ptrs[m]->_w.rows(), _neur_ptrs[m]->_w.cols()));
@@ -35,7 +37,7 @@ void MSGD_Neural_Trainer::_init() {
   }
 }
 
-void MSGD_Neural_Trainer::train_sample(const Evector &s, const Evector &t) {
+void CppNNet::MSGD_Neural_Trainer::train_sample(const Evector &s, const Evector &t) {
   std::vector<Evector> n, a;
   unsigned long M = _neur_ptrs.size();
 
@@ -92,9 +94,7 @@ void MSGD_Neural_Trainer::train_sample(const Evector &s, const Evector &t) {
   }
 }
 
-#include <iostream>
-
-void MSGD_Neural_Trainer::train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t) {
+void CppNNet::MSGD_Neural_Trainer::train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t) {
   unsigned long Q = s.size(),
       M = _neur_ptrs.size();
   // Temporary vectors

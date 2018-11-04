@@ -3,7 +3,7 @@
 #include <random>
 #include <iostream>
 
-std::vector<int> Neural_Trainer::shuffle_indices(int nindices) {
+std::vector<int> CppNNet::Neural_Trainer::shuffle_indices(int nindices) {
   std::vector<int> indices;
   indices.reserve(nindices);
   for (int i = 0; i < nindices; ++i)
@@ -17,31 +17,31 @@ std::vector<int> Neural_Trainer::shuffle_indices(int nindices) {
   return indices;
 }
 
-Neural_Trainer::Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptrs) {
+CppNNet::Neural_Trainer::Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptrs) {
   _neur_ptrs = neural_ptrs;
   unsigned long M = neural_ptrs.size();
   for (unsigned long m = 0; m < M; m++)
     _daf.push_back(neural_ptrs[m]->Get_Derivative_Function());
 }
 
-Neural_Trainer::Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptrs, float learning_rate) :
+CppNNet::Neural_Trainer::Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptrs, float learning_rate) :
     Neural_Trainer(neural_ptrs) {
   _learning_rate = learning_rate;
 }
 
-Neural_Trainer::Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr) {
+CppNNet::Neural_Trainer::Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr) {
   _neur_ptrs = end_neural_ptr->GetVecPtrs();
   unsigned long M = _neur_ptrs.size();
   for (unsigned long m = 0; m < M; m++)
     _daf.push_back(_neur_ptrs[m]->Get_Derivative_Function());
 }
 
-Neural_Trainer::Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, float learning_rate) :
+CppNNet::Neural_Trainer::Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, float learning_rate) :
     Neural_Trainer(end_neural_ptr) {
   _learning_rate = learning_rate;
 }
 
-void Neural_Trainer::train_sample(const Evector &s, const Evector &t) {
+void CppNNet::Neural_Trainer::train_sample(const Evector &s, const Evector &t) {
   std::vector<Evector> n, a;
   unsigned long M = _neur_ptrs.size();
 
@@ -95,7 +95,7 @@ void Neural_Trainer::train_sample(const Evector &s, const Evector &t) {
   }
 }
 
-void Neural_Trainer::train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t) {
+void CppNNet::Neural_Trainer::train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t) {
   unsigned long Q = s.size(),
       M = _neur_ptrs.size();
   // Temporary vector
@@ -169,8 +169,8 @@ void Neural_Trainer::train_batch(const std::vector<Evector> &s, const std::vecto
   }
 }
 
-void Neural_Trainer::train_minibatch(const std::vector<Evector> &s, const std::vector<Evector> &t,
-                                     unsigned long batch_size) {
+void CppNNet::Neural_Trainer::train_minibatch(const std::vector<Evector> &s, const std::vector<Evector> &t,
+                                              unsigned long batch_size) {
   // Get begin iterator and end iterator for s
   auto s_begin(s.cbegin());
   auto s_end(s.cend());

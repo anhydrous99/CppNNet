@@ -9,29 +9,33 @@
 #include "Neural_Layer.h"
 #include <string>
 
-class Net_Importer {
-private:
-  std::string _filename;
+namespace CppNNet {
 
-  std::string readfile();
+  class Net_Importer {
+  private:
+    std::string _filename;
 
-  void writefile(std::string content);
+    std::string readfile();
 
-public:
+    void writefile(std::string content);
 
-  explicit Net_Importer(std::string filename);
+  public:
 
-  explicit Net_Importer(std::string &filename);
+    explicit Net_Importer(std::string filename);
 
-  ~Net_Importer() = default;
+    explicit Net_Importer(std::string &filename);
 
-  std::shared_ptr<Neural_Layer> readNet_endptr();
+    ~Net_Importer() = default;
 
-  std::vector<std::shared_ptr<Neural_Layer>> readNet_vecptr();
+    std::shared_ptr<Neural_Layer> readNet_endptr();
 
-  void writeNet(std::shared_ptr<Neural_Layer> ptr);
+    std::vector<std::shared_ptr<Neural_Layer>> readNet_vecptr();
 
-  void writeNet(std::vector<std::shared_ptr<Neural_Layer>> ptrs);
-};
+    void writeNet(std::shared_ptr<Neural_Layer> ptr);
+
+    void writeNet(std::vector<std::shared_ptr<Neural_Layer>> ptrs);
+  };
+
+}
 
 #endif // CPPNNET_NET_IMPORTER_H

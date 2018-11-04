@@ -5,6 +5,8 @@
 #include <iostream>
 #include <chrono>
 
+using namespace CppNNet;
+
 int main(int argc, char *argv[]) {
   // Number of inputs
   int inp = 10;

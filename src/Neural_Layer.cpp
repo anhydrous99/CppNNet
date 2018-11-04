@@ -6,25 +6,25 @@
 #include <iterator>
 #include <cmath>
 
-Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, activation_function func,
-                           norm_data *dat) :
+CppNNet::Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, activation_function func,
+                                    norm_data *dat) :
     Neural_Layer(Weights, Bias, previous_layer, dat) {
   _func = func;
   _activ_func = Get_Activation_Function(func);
 }
 
-Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, norm_data *dat) :
+CppNNet::Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, norm_data *dat) :
     Neural_Layer(Weights, Bias, dat) {
   _prev_layer = previous_layer;
 }
 
-Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, activation_function func, norm_data *dat) :
+CppNNet::Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, activation_function func, norm_data *dat) :
     Neural_Layer(Weights, Bias, dat) {
   _func = func;
   _activ_func = Get_Activation_Function(func);
 }
 
-Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, norm_data *dat) {
+CppNNet::Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, norm_data *dat) {
   _w = Weights;
   _b = Bias;
 
@@ -35,25 +35,25 @@ Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, norm_data *dat) {
   }
 }
 
-Neural_Layer::Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, activation_function func,
-                           bool normalize) :
+CppNNet::Neural_Layer::Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, activation_function func,
+                                    bool normalize) :
     Neural_Layer(nneurons, ninputs, previous_layer, normalize) {
   _func = func;
   _activ_func = Get_Activation_Function(func);
 }
 
-Neural_Layer::Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, bool normalize) :
+CppNNet::Neural_Layer::Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, bool normalize) :
     Neural_Layer(nneurons, ninputs, normalize) {
   _prev_layer = previous_layer;
 }
 
-Neural_Layer::Neural_Layer(int nneurons, int ninputs, activation_function func, bool normalize) :
+CppNNet::Neural_Layer::Neural_Layer(int nneurons, int ninputs, activation_function func, bool normalize) :
     Neural_Layer(nneurons, ninputs, normalize) {
   _func = func;
   _activ_func = Get_Activation_Function(func);
 }
 
-Neural_Layer::Neural_Layer(int nneurons, int ninputs, bool normalize) : _w(nneurons, ninputs), _b(nneurons) {
+CppNNet::Neural_Layer::Neural_Layer(int nneurons, int ninputs, bool normalize) : _w(nneurons, ninputs), _b(nneurons) {
   // Obtain seed
   std::random_device rd;
   // Standard merseen_twister_engine
@@ -78,7 +78,7 @@ Neural_Layer::Neural_Layer(int nneurons, int ninputs, bool normalize) : _w(nneur
 // Utility function
 
 
-std::vector<Evector> Neural_Layer::normalize(const std::vector<Evector> &input) {
+std::vector<CppNNet::Evector> CppNNet::Neural_Layer::normalize(const std::vector<Evector> &input) {
   unsigned long n = input.size();
   // Mini-batch mean
   Evector mu = Evector::Zero(input[0].size());
@@ -100,7 +100,7 @@ std::vector<Evector> Neural_Layer::normalize(const std::vector<Evector> &input) 
 }
 
 
-Evector Neural_Layer::feedforward(Evector input) {
+CppNNet::Evector CppNNet::Neural_Layer::feedforward(Evector input) {
   Evector a = (_prev_layer) ? _prev_layer->feedforward(input) : input;
   Evector n = _w * a + _b;
 
@@ -110,7 +110,7 @@ Evector Neural_Layer::feedforward(Evector input) {
   return n;
 }
 
-std::vector<Evector> Neural_Layer::feedforward_batch(std::vector<Evector> input) {
+std::vector<CppNNet::Evector> CppNNet::Neural_Layer::feedforward_batch(std::vector<Evector> input) {
   std::vector<Evector> a = (_prev_layer) ? _prev_layer->feedforward_batch(input) : input;
   std::vector<Evector> n;
   for (auto &it : a)
@@ -127,7 +127,7 @@ std::vector<Evector> Neural_Layer::feedforward_batch(std::vector<Evector> input)
   return n;
 }
 
-std::vector<std::shared_ptr<Neural_Layer>> Neural_Layer::GetVecPtrs() {
+std::vector<std::shared_ptr<CppNNet::Neural_Layer>> CppNNet::Neural_Layer::GetVecPtrs() {
   std::vector<std::shared_ptr<Neural_Layer>> output;
 
   if (_prev_layer)
@@ -137,7 +137,7 @@ std::vector<std::shared_ptr<Neural_Layer>> Neural_Layer::GetVecPtrs() {
 }
 
 // Mean Square Error
-float Neural_Layer::mse(const std::vector<Evector> &input, const std::vector<Evector> &target) {
+float CppNNet::Neural_Layer::mse(const std::vector<Evector> &input, const std::vector<Evector> &target) {
   std::vector<Evector> output = feedforward_batch(input);
 
   float mse = 0.0;
@@ -153,12 +153,12 @@ float Neural_Layer::mse(const std::vector<Evector> &input, const std::vector<Eve
 }
 
 // Root Mean Square Error
-float Neural_Layer::rmse(const std::vector<Evector> &input, const std::vector<Evector> &target) {
+float CppNNet::Neural_Layer::rmse(const std::vector<Evector> &input, const std::vector<Evector> &target) {
   return std::sqrt(mse(input, target));
 }
 
 // Mean absolute error
-float Neural_Layer::mae(const std::vector<Evector> &input, const std::vector<Evector> &target) {
+float CppNNet::Neural_Layer::mae(const std::vector<Evector> &input, const std::vector<Evector> &target) {
   std::vector<Evector> output = feedforward_batch(input);
   float sum = 0.0;
   long sizei = target.size(),
@@ -171,7 +171,7 @@ float Neural_Layer::mae(const std::vector<Evector> &input, const std::vector<Eve
 }
 
 // Mean Percent Error
-float Neural_Layer::mpe(const std::vector<Evector> &input, const std::vector<Evector> &target) {
+float CppNNet::Neural_Layer::mpe(const std::vector<Evector> &input, const std::vector<Evector> &target) {
   std::vector<Evector> output = feedforward_batch(input);
   float sum = 0.0;
   long sizei = target.size(),
@@ -184,7 +184,7 @@ float Neural_Layer::mpe(const std::vector<Evector> &input, const std::vector<Eve
 }
 
 // Mean Absolute Percentage Error
-float Neural_Layer::mape(const std::vector<Evector> &input, const std::vector<Evector> &target) {
+float CppNNet::Neural_Layer::mape(const std::vector<Evector> &input, const std::vector<Evector> &target) {
   std::vector<Evector> output = feedforward_batch(input);
   float sum = 0.0;
   long sizei = target.size(),
@@ -197,7 +197,7 @@ float Neural_Layer::mape(const std::vector<Evector> &input, const std::vector<Ev
 }
 
 // coefficient of determination (R squared)
-float Neural_Layer::r2(const std::vector<Evector> &input, const std::vector<Evector> &target) {
+float CppNNet::Neural_Layer::r2(const std::vector<Evector> &input, const std::vector<Evector> &target) {
   std::vector<Evector> output = feedforward_batch(input);
   long sizei = target.size(),
       sizej = target[0].size();
@@ -222,13 +222,13 @@ float Neural_Layer::r2(const std::vector<Evector> &input, const std::vector<Evec
 }
 
 // Returns number of weights and biases for the layer and all layers prior
-long Neural_Layer::parameter_count() {
+long CppNNet::Neural_Layer::parameter_count() {
   long a = (_prev_layer) ? _prev_layer->parameter_count() : 0;
   return _w.size() + _b.size() + a;
 }
 
 // Akaike information criterion (AIC)
-float Neural_Layer::aic(const std::vector<Evector> &input, const std::vector<Evector> &target) {
+float CppNNet::Neural_Layer::aic(const std::vector<Evector> &input, const std::vector<Evector> &target) {
   long p = parameter_count();
   std::vector<Evector> output = feedforward_batch(input);
   long sizei = target.size(),
@@ -244,7 +244,7 @@ float Neural_Layer::aic(const std::vector<Evector> &input, const std::vector<Eve
 }
 
 // Corrected Akaike information criterion (AICc)
-float Neural_Layer::aicc(const std::vector<Evector> &input, const std::vector<Evector> &target) {
+float CppNNet::Neural_Layer::aicc(const std::vector<Evector> &input, const std::vector<Evector> &target) {
   long p = parameter_count();
   std::vector<Evector> output = feedforward_batch(input);
   long sizei = target.size(),
@@ -260,7 +260,7 @@ float Neural_Layer::aicc(const std::vector<Evector> &input, const std::vector<Ev
 }
 
 // Bayesian information criterion (BIC)
-float Neural_Layer::bic(const std::vector<Evector> &input, const std::vector<Evector> &target) {
+float CppNNet::Neural_Layer::bic(const std::vector<Evector> &input, const std::vector<Evector> &target) {
   long p = parameter_count();
   std::vector<Evector> output = feedforward_batch(input);
   long sizei = target.size(),
@@ -276,7 +276,7 @@ float Neural_Layer::bic(const std::vector<Evector> &input, const std::vector<Eve
 }
 
 
-function Neural_Layer::Get_Activation_Function(activation_function func) {
+CppNNet::function CppNNet::Neural_Layer::Get_Activation_Function(activation_function func) {
   switch (func) {
     default:
     case activation_function::Identity:
@@ -294,15 +294,15 @@ function Neural_Layer::Get_Activation_Function(activation_function func) {
   }
 }
 
-function Neural_Layer::Get_Activation_Function() {
+CppNNet::function CppNNet::Neural_Layer::Get_Activation_Function() {
   return Get_Activation_Function(_func);
 }
 
-activation_function Neural_Layer::Current_Activation_Function() {
+CppNNet::activation_function CppNNet::Neural_Layer::Current_Activation_Function() {
   return _func;
 }
 
-function Neural_Layer::Get_Derivative_Function(activation_function func) {
+CppNNet::function CppNNet::Neural_Layer::Get_Derivative_Function(activation_function func) {
   switch (func) {
     default:
     case activation_function::Identity:
@@ -320,6 +320,6 @@ function Neural_Layer::Get_Derivative_Function(activation_function func) {
   }
 }
 
-function Neural_Layer::Get_Derivative_Function() {
+CppNNet::function CppNNet::Neural_Layer::Get_Derivative_Function() {
   return Get_Derivative_Function(_func);
 }

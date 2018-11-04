@@ -8,34 +8,38 @@
 
 #include "Neural_Trainer.h"
 
-struct learning_momentum {
-  float momentum = 0.8;
-  float learning_rate = 0.01;
-};
+namespace CppNNet {
 
-class MSGD_Neural_Trainer : public Neural_Trainer {
-protected:
-  std::vector<Ematrix> _past_weights;
-  std::vector<Evector> _past_biases;
-  float _momentum_constant = 0.8;
-  bool _isinit = false;
+  struct learning_momentum {
+    float momentum = 0.8;
+    float learning_rate = 0.01;
+  };
 
-  void _init();
+  class MSGD_Neural_Trainer : public Neural_Trainer {
+  protected:
+    std::vector<Ematrix> _past_weights;
+    std::vector<Evector> _past_biases;
+    float _momentum_constant = 0.8;
+    bool _isinit = false;
 
-public:
-  MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr);
+    void _init();
 
-  MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, learning_momentum lrm);
+  public:
+    MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr);
 
-  MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr);
+    MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, learning_momentum lrm);
 
-  MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, learning_momentum lrm);
+    MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr);
 
-  ~MSGD_Neural_Trainer() = default;
+    MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, learning_momentum lrm);
 
-  void train_sample(const Evector &s, const Evector &t) override;
+    ~MSGD_Neural_Trainer() = default;
 
-  void train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t) override;
-};
+    void train_sample(const Evector &s, const Evector &t) override;
+
+    void train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t) override;
+  };
+
+}
 
 #endif //CPPNNET_MSGD_NEURAL_TRAINER_H

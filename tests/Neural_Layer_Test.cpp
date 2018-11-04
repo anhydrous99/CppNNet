@@ -2,6 +2,8 @@
 #include "Normalizer.h"
 #include <iostream>
 
+using namespace CppNNet;
+
 int main() {
   std::cout << "Testing Neural_Layer\n";
   // Declare Weights and bias matrices and vectors

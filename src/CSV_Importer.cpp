@@ -15,54 +15,54 @@
 
 #define CHUNK 16384
 
-CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets) {
+CppNNet::CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets) {
   _filename = filename;
   _sof = size_of_samples;
   _sot = size_of_targets;
 }
 
-CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, bool reverse) :
+CppNNet::CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, bool reverse) :
     CSV_Importer(filename, size_of_samples, size_of_targets) {
   _reverse = reverse;
 }
 
-CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, char delimiter) :
+CppNNet::CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, char delimiter) :
     CSV_Importer(filename, size_of_samples, size_of_targets) {
   _delim = delimiter;
 }
 
-CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, char delimiter,
-                           bool reverse) : CSV_Importer(filename, size_of_samples, size_of_targets, delimiter) {
+CppNNet::CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, char delimiter,
+                                    bool reverse) : CSV_Importer(filename, size_of_samples, size_of_targets, delimiter) {
   _reverse = reverse;
 }
 
-CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx) {
+CppNNet::CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx) {
   _start_idx = start_idx;
 }
 
-CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx,
-                           bool reverse) : CSV_Importer(filename, size_of_samples, size_of_targets, start_idx) {
+CppNNet::CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx,
+                                    bool reverse) : CSV_Importer(filename, size_of_samples, size_of_targets, start_idx) {
   _reverse = reverse;
 }
 
-CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx,
-                           char delimiter) :
+CppNNet::CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx,
+                                    char delimiter) :
     CSV_Importer(filename, size_of_samples, size_of_targets, start_idx) {
   _delim = delimiter;
 }
 
-CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx,
-                           char delimiter, bool reverse) : CSV_Importer(filename, size_of_samples, size_of_targets,
+CppNNet::CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx,
+                                    char delimiter, bool reverse) : CSV_Importer(filename, size_of_samples, size_of_targets,
                                                                         start_idx, delimiter) {
   _reverse = reverse;
 }
 
-CSV_Importer::~CSV_Importer() {
+CppNNet::CSV_Importer::~CSV_Importer() {
   if (_curlinit)
     curl_global_cleanup();
 }
 
-void CSV_Importer::ObtainData() {
+void CppNNet::CSV_Importer::ObtainData() {
   int len = _filename.length();
   bool gotten = false;
   MemoryStruct mem;
@@ -125,7 +125,7 @@ void CSV_Importer::ObtainData() {
 /* call back for binary files */
 static size_t Binary_WriteCallback(void *contents, size_t size, size_t nmemb, void *userp) {
   size_t realsize = size * nmemb;
-  auto *mem = (MemoryStruct *) userp;
+  auto *mem = (CppNNet::MemoryStruct *) userp;
 
   auto *ptr = (unsigned char *) realloc(mem->memory, mem->size + realsize + 1);
   if (ptr == nullptr) {
@@ -170,7 +170,7 @@ static int older_progress(void *p, double dltotal, double dlnow, double ultotal,
                        static_cast<curl_off_t>(ultotal), static_cast<curl_off_t>(ulnow));
 }
 
-MemoryStruct CSV_Importer::Binary_Downloader() {
+CppNNet::MemoryStruct CppNNet::CSV_Importer::Binary_Downloader() {
   CURL *curl;
   CURLcode res;
   MemoryStruct chunk;
@@ -207,7 +207,7 @@ MemoryStruct CSV_Importer::Binary_Downloader() {
   return chunk;
 }
 
-int CSV_Importer::doinflate(const MemoryStruct *src, MemoryStruct *dst) {
+int CppNNet::CSV_Importer::doinflate(const MemoryStruct *src, MemoryStruct *dst) {
   int ret, flush;
   unsigned have;
   z_stream strm;
@@ -276,7 +276,7 @@ int CSV_Importer::doinflate(const MemoryStruct *src, MemoryStruct *dst) {
   return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
 }
 
-void CSV_Importer::parse(std::string &to_parse) {
+void CppNNet::CSV_Importer::parse(std::string &to_parse) {
   std::stringstream stream1(to_parse);
   std::string line, tmp;
   int i = 0;
@@ -291,7 +291,7 @@ void CSV_Importer::parse(std::string &to_parse) {
   }
 }
 
-void CSV_Importer::zerr(int ret) {
+void CppNNet::CSV_Importer::zerr(int ret) {
   std::cerr << "CSV_Importer: ";
   switch (ret) {
     case Z_ERRNO:
@@ -314,7 +314,7 @@ void CSV_Importer::zerr(int ret) {
   }
 }
 
-std::vector<std::string> CSV_Importer::GetData() {
+std::vector<std::string> CppNNet::CSV_Importer::GetData() {
   if (_hasdata)
     return _data;
   else {
@@ -323,7 +323,7 @@ std::vector<std::string> CSV_Importer::GetData() {
   }
 }
 
-std::vector<Eigen::VectorXf> CSV_Importer::GetSamples() {
+std::vector<Eigen::VectorXf> CppNNet::CSV_Importer::GetSamples() {
   if (!_hasdata)
     ObtainData();
 
@@ -347,7 +347,7 @@ std::vector<Eigen::VectorXf> CSV_Importer::GetSamples() {
   return output;
 }
 
-std::vector<Eigen::VectorXf> CSV_Importer::GetTargets() {
+std::vector<Eigen::VectorXf> CppNNet::CSV_Importer::GetTargets() {
   if (!_hasdata)
     ObtainData();
 

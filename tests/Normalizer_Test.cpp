@@ -2,6 +2,8 @@
 #include "Normalizer.h"
 #include <iostream>
 
+using namespace CppNNet;
+
 int main(int argc, char *argv[]) {
   if (argc != 2) {
     std::cerr << "Error: Wrong number of arguments. Exiting...\n";

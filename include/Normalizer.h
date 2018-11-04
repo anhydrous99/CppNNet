@@ -9,47 +9,51 @@
 #include <Eigen/Core>
 #include <vector>
 
-struct NormSettings {
-  Eigen::VectorXf xoffset;
-  Eigen::VectorXf gain;
-  float ymin;
-};
+namespace CppNNet {
 
-class Normalizer {
-private:
-  NormSettings _settings;
-public:
-  Normalizer(std::vector<Eigen::VectorXf> &norm_fig, float ymin, float ymax);
+  struct NormSettings {
+    Eigen::VectorXf xoffset;
+    Eigen::VectorXf gain;
+    float ymin;
+  };
 
-  Normalizer(Eigen::VectorXf &to_norm, Eigen::VectorXf xoffset, Eigen::VectorXf gain, float ymin);
+  class Normalizer {
+  private:
+    NormSettings _settings;
+  public:
+    Normalizer(std::vector<Eigen::VectorXf> &norm_fig, float ymin, float ymax);
 
-  Normalizer(Eigen::VectorXf &to_norm, NormSettings settings);
+    Normalizer(Eigen::VectorXf &to_norm, Eigen::VectorXf xoffset, Eigen::VectorXf gain, float ymin);
 
-  Normalizer(Eigen::VectorXf xoffset, Eigen::VectorXf gain, float ymin);
+    Normalizer(Eigen::VectorXf &to_norm, NormSettings settings);
 
-  Normalizer(NormSettings settings);
+    Normalizer(Eigen::VectorXf xoffset, Eigen::VectorXf gain, float ymin);
 
-  void norm(Eigen::VectorXf &to_norm);
+    Normalizer(NormSettings settings);
 
-  Eigen::VectorXf GetNorm(Eigen::VectorXf &to_norm);
+    void norm(Eigen::VectorXf &to_norm);
 
-  void reverse(Eigen::VectorXf &to_reverse);
+    Eigen::VectorXf GetNorm(Eigen::VectorXf &to_norm);
 
-  void reverse(Eigen::VectorXf &to_reverse, NormSettings settings);
+    void reverse(Eigen::VectorXf &to_reverse);
 
-  Eigen::VectorXf GetReverse(Eigen::VectorXf &to_reverse);
+    void reverse(Eigen::VectorXf &to_reverse, NormSettings settings);
 
-  void batch_norm(std::vector<Eigen::VectorXf> &to_norm);
+    Eigen::VectorXf GetReverse(Eigen::VectorXf &to_reverse);
 
-  void batch_reverse(std::vector<Eigen::VectorXf> &to_reverse);
+    void batch_norm(std::vector<Eigen::VectorXf> &to_norm);
 
-  std::vector<Eigen::VectorXf> get_batch_norm(std::vector<Eigen::VectorXf> &to_norm);
+    void batch_reverse(std::vector<Eigen::VectorXf> &to_reverse);
 
-  std::vector<Eigen::VectorXf> get_batch_reverse(std::vector<Eigen::VectorXf> &to_reverse);
+    std::vector<Eigen::VectorXf> get_batch_norm(std::vector<Eigen::VectorXf> &to_norm);
 
-  NormSettings GetSettings() { return _settings; }
+    std::vector<Eigen::VectorXf> get_batch_reverse(std::vector<Eigen::VectorXf> &to_reverse);
 
-  ~Normalizer() = default;
-};
+    NormSettings GetSettings() { return _settings; }
+
+    ~Normalizer() = default;
+  };
+
+}
 
 #endif // CPPNNET_NORMALIZER_H
