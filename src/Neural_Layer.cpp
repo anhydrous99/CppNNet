@@ -291,6 +291,10 @@ CppNNet::function CppNNet::Neural_Layer::Get_Activation_Function(activation_func
       return Sin_Function;
     case activation_function::Gaussian:
       return Gaussian_Function;
+    case activation_function::ReLU:
+      return ReLU_Function;
+    case activation_function::LeakyReLU:
+      return LeakyReLU_Function;
   }
 }
 
@@ -317,6 +321,10 @@ CppNNet::function CppNNet::Neural_Layer::Get_Derivative_Function(activation_func
       return Sin_Function_D;
     case activation_function::Gaussian:
       return Gaussian_Function_D;
+    case activation_function::ReLU:
+      return ReLU_Function_D;
+    case activation_function::LeakyReLU:
+      return LeakyReLU_Function_D;
   }
 }
 

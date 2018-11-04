@@ -22,7 +22,7 @@ namespace CppNNet {
   };
 
   enum activation_function {
-    Identity, Logistic, HyperbolicTan, ArcTan, Sin, Gaussian
+    Identity, Logistic, HyperbolicTan, ArcTan, Sin, Gaussian, ReLU, LeakyReLU
   };
 
   class Neural_Layer : public std::enable_shared_from_this<Neural_Layer> {

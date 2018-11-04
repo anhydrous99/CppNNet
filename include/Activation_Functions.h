@@ -24,6 +24,7 @@ namespace CppNNet {
 // Hyperbolic Tangent
   std::function<float(float)> HyperbolicTan_Function = [](float x) { return tanh(x); };
   std::function<float(float)> HyperbolicTan_Function_D = [](float x) { return 1 - pow(HyperbolicTan_Function(x), 2); };
+
 // ArcTangent
   std::function<float(float)> ArcTan_Function = [](float x) { return atan(x); };
   std::function<float(float)> ArcTan_Function_D = [](float x) { return 1 / (pow(x, 2) + 1); };
@@ -35,6 +36,14 @@ namespace CppNNet {
 // Gaussian
   std::function<float(float)> Gaussian_Function = [](float x) { return exp(-pow(x, 2)); };
   std::function<float(float)> Gaussian_Function_D = [](float x) { return -2 * x * exp(-pow(x, 2)); };
+
+  // ReLU
+  std::function<float(float)> ReLU_Function = [](float x) { return (x >= 0) ? x : 0; };
+  std::function<float(float)> ReLU_Function_D = [](float x) { return (x >= 0) ? 1 : 0; };
+
+  // Leaky ReLU
+  std::function<float(float)> LeakyReLU_Function = [](float x) { return (x >= 0) ? x : 0.01 * x; };
+  std::function<float(float)> LeakyReLU_Function_D = [](float x) { return (x >= 0) ? 1 : 0.01; };
 }
 
 #endif // CPPNNET_ACTIVATION_FUNCTIONS_H
