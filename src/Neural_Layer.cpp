@@ -278,6 +278,7 @@ float Neural_Layer::bic(const std::vector<Evector> &input, const std::vector<Eve
 
 function Neural_Layer::Get_Activation_Function(activation_function func) {
   switch (func) {
+    default:
     case activation_function::Identity:
       return Identity_Function;
     case activation_function::Logistic:
@@ -303,6 +304,7 @@ activation_function Neural_Layer::Current_Activation_Function() {
 
 function Neural_Layer::Get_Derivative_Function(activation_function func) {
   switch (func) {
+    default:
     case activation_function::Identity:
       return Identity_Function_D;
     case activation_function::Logistic:
