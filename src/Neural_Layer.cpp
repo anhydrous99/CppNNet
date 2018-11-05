@@ -58,15 +58,23 @@ CppNNet::Neural_Layer::Neural_Layer(int nneurons, int ninputs, bool normalize) :
   std::random_device rd;
   // Standard merseen_twister_engine
   std::mt19937 gen(rd());
-  std::uniform_real_distribution<float> dis(0.0, 1.0);
+  // Initialization using Gaussian distribution
+  std::normal_distribution<float> dis(0.0, 1.0);
+
+  // Helps with variance
+  float xiv = 1;
+  if (_func == activation_function::LeakyReLU || _func == activation_function::ReLU)
+    xiv = std::sqrt(static_cast<float>(2.0) / ninputs);
+  else if (_func == activation_function::HyperbolicTan)
+    xiv = std::sqrt(static_cast<float>(1.0) / (ninputs + nneurons));
 
   // Fill the weights with random numbers
   for (long i = 0, size = _w.size(); i < size; i++)
-    *(_w.data() + i) = dis(gen);
+    *(_w.data() + i) = dis(gen) * xiv;
 
   // Fill the bias with random numbers
   for (long i = 0, size = _b.size(); i < size; i++)
-    *(_b.data() + i) = dis(gen);
+    *(_b.data() + i) = dis(gen) * xiv;
 
   if (normalize) {
     _normalize = true;
