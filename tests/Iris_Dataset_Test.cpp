@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
   float mae = layer2->mae(samples, targets);
   float mpe = layer2->mpe(samples, targets);   // mpe and mape return -nan and inf
   float mape = layer2->mape(samples, targets); //  since targets contain zeros
-  float r2 = layer2->r2(samples, targets);
+  float r2 = layer2->r2_avg(samples, targets);
   float aic = layer2->aic(samples, targets);
   float aicc = layer2->aicc(samples, targets);
   float bic = layer2->bic(samples, targets);

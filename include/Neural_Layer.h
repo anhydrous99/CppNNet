@@ -90,7 +90,10 @@ namespace CppNNet {
     float mape(const std::vector<Evector> &input, const std::vector<Evector> &target);
 
     // coefficient of determination (R squared)
-    float r2(const std::vector<Evector> &input, const std::vector<Evector> &target);
+    Evector r2(const std::vector<Evector> &input, const std::vector<Evector> &target);
+
+    // Average of coefficient of determination (R squared)
+    float r2_avg(const std::vector<Evector> &input, const std::vector<Evector> &target);
 
     // Akaike information criterion (AIC)
     float aic(const std::vector<Evector> &input, const std::vector<Evector> &target);

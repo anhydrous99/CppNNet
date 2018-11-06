@@ -205,28 +205,32 @@ float CppNNet::Neural_Layer::mape(const std::vector<Evector> &input, const std::
 }
 
 // coefficient of determination (R squared)
-float CppNNet::Neural_Layer::r2(const std::vector<Evector> &input, const std::vector<Evector> &target) {
+CppNNet::Evector CppNNet::Neural_Layer::r2(const std::vector<Evector> &input, const std::vector<Evector> &target) {
   std::vector<Evector> output = feedforward_batch(input);
   long sizei = target.size(),
       sizej = target[0].size();
-  auto n = static_cast<float>(sizei * sizej);
 
-  float y_mean = std::accumulate(input.begin(), input.end(), 0,
-                                 [](float a, const Evector &b) {
-                                   return a + b.sum();
-                                 }) / n;
+  Evector y_mean = Evector::Zero(sizej);
 
-  float sstot = 0.0;
-  float ssres = 0.0;
+  for (long i = 0; i < sizei; i++)
+    y_mean += target[i];
+  y_mean /= sizei;
+
+  Evector sstot = Evector::Zero(sizej);
+  Evector ssres = Evector::Zero(sizej);
 
   for (long i = 0; i < sizei; i++) {
-    for (long j = 0; j < sizej; j++) {
-      sstot += std::pow(input[i][j] - y_mean, 2);
-      ssres += std::pow(input[i][j] - output[i][j], 2);
-    }
+    sstot += (target[i] - y_mean).array().square().matrix();
+    ssres += (target[i] - output[i]).array().square().matrix();
   }
 
-  return 1 - (ssres / sstot);
+  return Evector::Ones(sizej) - (ssres.array() / sstot.array()).matrix();
+}
+
+float CppNNet::Neural_Layer::r2_avg(const std::vector<CppNNet::Evector> &input,
+                                    const std::vector<CppNNet::Evector> &target) {
+  Evector pass = r2(input, target);
+  return pass.sum() / pass.size();
 }
 
 // Returns number of weights and biases for the layer and all layers prior
