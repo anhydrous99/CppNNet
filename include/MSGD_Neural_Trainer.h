@@ -25,11 +25,11 @@ namespace CppNNet {
     void _init();
 
   public:
-    MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr);
+    explicit MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr);
 
     MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr, learning_momentum lrm);
 
-    MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr);
+    explicit MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr);
 
     MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, learning_momentum lrm);
 
@@ -37,7 +37,9 @@ namespace CppNNet {
 
     void train_sample(const Evector &s, const Evector &t) override;
 
-    void train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t) override;
+    void train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t, bool shuffle) override;
+
+    using Neural_Trainer::train_batch;
   };
 
 }

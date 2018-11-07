@@ -3,10 +3,10 @@
 #include <random>
 #include <iostream>
 
-std::vector<int> CppNNet::Neural_Trainer::shuffle_indices(int nindices) {
-  std::vector<int> indices;
+std::vector<unsigned long> CppNNet::Neural_Trainer::shuffle_indices(unsigned long nindices) {
+  std::vector<unsigned long> indices;
   indices.reserve(nindices);
-  for (int i = 0; i < nindices; ++i)
+  for (unsigned long i = 0; i < nindices; ++i)
     indices.push_back(i);
 
   std::random_device rd;
@@ -25,7 +25,7 @@ CppNNet::Neural_Trainer::Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer
 }
 
 CppNNet::Neural_Trainer::Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptrs, float learning_rate) :
-    Neural_Trainer(neural_ptrs) {
+    Neural_Trainer(std::move(neural_ptrs)) {
   _learning_rate = learning_rate;
 }
 
@@ -37,7 +37,7 @@ CppNNet::Neural_Trainer::Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural
 }
 
 CppNNet::Neural_Trainer::Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr, float learning_rate) :
-    Neural_Trainer(end_neural_ptr) {
+    Neural_Trainer(std::move(end_neural_ptr)) {
   _learning_rate = learning_rate;
 }
 
@@ -95,11 +95,13 @@ void CppNNet::Neural_Trainer::train_sample(const Evector &s, const Evector &t) {
   }
 }
 
-void CppNNet::Neural_Trainer::train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t) {
+void CppNNet::Neural_Trainer::train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t, bool shuffle) {
   unsigned long Q = s.size(),
       M = _neur_ptrs.size();
   // Temporary vector
-  std::vector<int> idxs = shuffle_indices(Q);
+  std::vector<unsigned long> idxs;
+  if (shuffle)
+    idxs = shuffle_indices(Q);
   // Declare and initialize sa and s matrix and vector
   std::vector<Ematrix> sa_sum;
   std::vector<Evector> s_sum;
@@ -110,7 +112,7 @@ void CppNNet::Neural_Trainer::train_batch(const std::vector<Evector> &s, const s
 
   for (unsigned long q = 0; q < Q; q++) {
     std::vector<Evector> aq, nq;
-    int idx = idxs[q];
+    unsigned long idx = (shuffle) ? idxs[q] : q;
     aq.push_back(s[idx]);
     for (unsigned long m = 1; m <= M; m++) {
       unsigned long mm1 = m - 1;
@@ -167,6 +169,10 @@ void CppNNet::Neural_Trainer::train_batch(const std::vector<Evector> &s, const s
       current_ptr->_b -= aq * s_sum[m];
     }
   }
+}
+
+void CppNNet::Neural_Trainer::train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t) {
+  train_batch(s, t, true);
 }
 
 void CppNNet::Neural_Trainer::train_minibatch(const std::vector<Evector> &s, const std::vector<Evector> &t,

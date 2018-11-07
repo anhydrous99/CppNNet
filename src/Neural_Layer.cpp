@@ -8,25 +8,25 @@
 
 CppNNet::Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, activation_function func,
                                     norm_data *dat) :
-    Neural_Layer(Weights, Bias, previous_layer, dat) {
+    Neural_Layer(std::move(Weights), std::move(Bias), std::move(previous_layer), dat) {
   _func = func;
   _activ_func = Get_Activation_Function(func);
 }
 
 CppNNet::Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, Neural_Ptr previous_layer, norm_data *dat) :
-    Neural_Layer(Weights, Bias, dat) {
-  _prev_layer = previous_layer;
+    Neural_Layer(std::move(Weights), std::move(Bias), dat) {
+  _prev_layer = std::move(previous_layer);
 }
 
 CppNNet::Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, activation_function func, norm_data *dat) :
-    Neural_Layer(Weights, Bias, dat) {
+    Neural_Layer(std::move(Weights), std::move(Bias), dat) {
   _func = func;
   _activ_func = Get_Activation_Function(func);
 }
 
 CppNNet::Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, norm_data *dat) {
-  _w = Weights;
-  _b = Bias;
+  _w = std::move(Weights);
+  _b = std::move(Bias);
 
   if (dat != nullptr) {
     _normalize = true;
@@ -37,14 +37,14 @@ CppNNet::Neural_Layer::Neural_Layer(Ematrix Weights, Evector Bias, norm_data *da
 
 CppNNet::Neural_Layer::Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, activation_function func,
                                     bool normalize) :
-    Neural_Layer(nneurons, ninputs, previous_layer, normalize) {
+    Neural_Layer(nneurons, ninputs, std::move(previous_layer), normalize) {
   _func = func;
   _activ_func = Get_Activation_Function(func);
 }
 
 CppNNet::Neural_Layer::Neural_Layer(int nneurons, int ninputs, Neural_Ptr previous_layer, bool normalize) :
     Neural_Layer(nneurons, ninputs, normalize) {
-  _prev_layer = previous_layer;
+  _prev_layer = std::move(previous_layer);
 }
 
 CppNNet::Neural_Layer::Neural_Layer(int nneurons, int ninputs, activation_function func, bool normalize) :

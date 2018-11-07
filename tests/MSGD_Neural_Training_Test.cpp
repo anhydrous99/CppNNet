@@ -33,8 +33,8 @@ int main(int argc, char *argv[]) {
 
   // Train
   for (int i = 0, sizei = 2000; i < sizei; i++) {
-    std::vector<int> idxs = trainer.shuffle_indices(samples.size());
-    for (int j = 0, sizej = samples.size(); j < sizej; j++)
+    std::vector<unsigned long> idxs = trainer.shuffle_indices(samples.size());
+    for (unsigned long j = 0, sizej = samples.size(); j < sizej; j++)
       trainer.train_sample(normed_samples[idxs[j]], normed_targets[idxs[j]]);
   }
 

@@ -1,8 +1,8 @@
 #include "Normalizer.h"
 
 CppNNet::Normalizer::Normalizer(std::vector<Eigen::VectorXf> &xlist, float ymin, float ymax) {
-  int isize = xlist.size();
-  int jsize = xlist[0].size();
+  unsigned long isize = xlist.size();
+  long jsize = xlist[0].size();
   Eigen::VectorXf gain(jsize);
   Eigen::VectorXf xoffset(jsize);
 
@@ -24,43 +24,43 @@ CppNNet::Normalizer::Normalizer(std::vector<Eigen::VectorXf> &xlist, float ymin,
 }
 
 CppNNet::Normalizer::Normalizer(Eigen::VectorXf &to_norm, Eigen::VectorXf xoffset, Eigen::VectorXf gain, float ymin) :
-    Normalizer(xoffset, gain, ymin) {
+    Normalizer(std::move(xoffset), std::move(gain), ymin) {
   norm(to_norm);
 }
 
 CppNNet::Normalizer::Normalizer(Eigen::VectorXf &to_norm, NormSettings settings) {
   _settings = settings;
-  for (int i = 0, size = to_norm.size(); i < size; i++)
+  for (long i = 0, size = to_norm.size(); i < size; i++)
     to_norm[i] = (to_norm[i] - settings.xoffset[i]) * settings.gain[i] + settings.ymin;
 }
 
 CppNNet::Normalizer::Normalizer(Eigen::VectorXf xoffset, Eigen::VectorXf gain, float ymin) {
   _settings.ymin = ymin;
-  _settings.xoffset = xoffset;
-  _settings.gain = gain;
+  _settings.xoffset = std::move(xoffset);
+  _settings.gain = std::move(gain);
 }
 
-CppNNet::Normalizer::Normalizer(NormSettings settings) { _settings = settings; }
+CppNNet::Normalizer::Normalizer(NormSettings settings) { _settings = std::move(settings); }
 
 void CppNNet::Normalizer::norm(Eigen::VectorXf &to_norm) {
-  for (int i = 0, size = to_norm.size(); i < size; i++)
+  for (long i = 0, size = to_norm.size(); i < size; i++)
     to_norm[i] = (to_norm[i] - _settings.xoffset[i]) * _settings.gain[i] + _settings.ymin;
 }
 
 Eigen::VectorXf CppNNet::Normalizer::GetNorm(Eigen::VectorXf &to_norm) {
   Eigen::VectorXf n(to_norm.size());
-  for (int i = 0, size = to_norm.size(); i < size; i++)
+  for (long i = 0, size = to_norm.size(); i < size; i++)
     n[i] = (to_norm[i] - _settings.xoffset[i]) * _settings.gain[i] + _settings.ymin;
   return n;
 }
 
 void CppNNet::Normalizer::reverse(Eigen::VectorXf &to_reverse) {
-  for (int i = 0, size = to_reverse.size(); i < size; i++)
+  for (long i = 0, size = to_reverse.size(); i < size; i++)
     to_reverse[i] = ((to_reverse[i] - _settings.ymin) / _settings.gain[i]) + _settings.xoffset[i];
 }
 
 void CppNNet::Normalizer::reverse(Eigen::VectorXf &to_reverse, NormSettings settings) {
-  _settings = settings;
+  _settings = std::move(settings);
   reverse(to_reverse);
 }
 

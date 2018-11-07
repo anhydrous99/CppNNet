@@ -6,25 +6,26 @@
 
 CppNNet::MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr)
     : Neural_Trainer(
-    neural_ptr) {
+    std::move(neural_ptr)) {
   _init();
 }
 
 CppNNet::MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptr,
                                                   learning_momentum lrm)
     : Neural_Trainer(
-    neural_ptr, lrm.learning_rate) {
+    std::move(neural_ptr), lrm.learning_rate) {
   _momentum_constant = lrm.momentum;
   _init();
 }
 
 CppNNet::MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr) :
-    Neural_Trainer(end_neural_ptr) {
+    Neural_Trainer(std::move(end_neural_ptr)) {
   _init();
 }
 
 CppNNet::MSGD_Neural_Trainer::MSGD_Neural_Trainer(std::shared_ptr<Neural_Layer> end_neural_ptr,
-                                                  learning_momentum lrm) : Neural_Trainer(end_neural_ptr, lrm.learning_rate) {
+                                                  learning_momentum lrm) : Neural_Trainer(std::move(end_neural_ptr),
+                                                                                          lrm.learning_rate) {
   _momentum_constant = lrm.momentum;
   _init();
 }
@@ -94,11 +95,15 @@ void CppNNet::MSGD_Neural_Trainer::train_sample(const Evector &s, const Evector 
   }
 }
 
-void CppNNet::MSGD_Neural_Trainer::train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t) {
+void
+CppNNet::MSGD_Neural_Trainer::train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t, bool shuffle) {
   unsigned long Q = s.size(),
       M = _neur_ptrs.size();
   // Temporary vectors
-  std::vector<int> idxs = shuffle_indices(Q);
+  std::vector<unsigned long> idxs;
+  if (shuffle)
+    idxs = shuffle_indices(Q);
+
   std::vector<Ematrix> past_weights;
   std::vector<Evector> past_biases;
   for (unsigned long m = 0; m < M; m++) {
@@ -116,7 +121,7 @@ void CppNNet::MSGD_Neural_Trainer::train_batch(const std::vector<Evector> &s, co
 
   for (unsigned long q = 0; q < Q; q++) {
     std::vector<Evector> aq, nq;
-    int idx = idxs[q];
+    unsigned long idx = (shuffle) ? idxs[q] : q;
     aq.push_back(s[idx]);
     for (unsigned long m = 1; m <= M; m++) {
       unsigned long mm1 = m - 1;
