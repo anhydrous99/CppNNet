@@ -33,7 +33,8 @@ namespace CppNNet {
 
     void train_batch(const std::vector<Evector> &s, const std::vector<Evector> &t);
 
-    void train_minibatch(const std::vector<Evector> &s, const std::vector<Evector> &t, unsigned long batch_size);
+    void train_minibatch(const std::vector<Evector> &s, const std::vector<Evector> &t, unsigned long batch_size,
+                         bool shuffle = true);
 
     std::vector<unsigned long> shuffle_indices(unsigned long nindices);
   };

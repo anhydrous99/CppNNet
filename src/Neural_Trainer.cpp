@@ -1,4 +1,5 @@
 #include "Neural_Trainer.h"
+#include "util.h"
 #include <iterator>
 #include <random>
 #include <iostream>
@@ -176,16 +177,24 @@ void CppNNet::Neural_Trainer::train_batch(const std::vector<Evector> &s, const s
 }
 
 void CppNNet::Neural_Trainer::train_minibatch(const std::vector<Evector> &s, const std::vector<Evector> &t,
-                                              unsigned long batch_size) {
+                                              unsigned long batch_size, bool shuffle) {
+  // Create Copies to shuffle
+  std::vector<Evector> ss = s;
+  std::vector<Evector> tt = t;
+
+  // Shuffle both samples and targets
+  if (shuffle)
+    double_shuffle(ss.begin(), ss.end(), tt.begin(), tt.end());
+
   // Get begin iterator and end iterator for s
-  auto s_begin(s.cbegin());
-  auto s_end(s.cend());
+  auto s_begin(ss.cbegin());
+  auto s_end(ss.cend());
 
   // Get begin iterator and end iterator for t
-  auto t_begin(t.cbegin());
-  auto t_end(t.cend());
+  auto t_begin(tt.cbegin());
+  auto t_end(tt.cend());
 
-  auto n_iterations = (unsigned long) std::floor((double) s.size() / (double) batch_size);
+  auto n_iterations = (unsigned long) std::floor((double) ss.size() / (double) batch_size);
 
 #pragma omp parallel for
   for (unsigned long i = 0; i < n_iterations; i++) {
@@ -202,6 +211,6 @@ void CppNNet::Neural_Trainer::train_minibatch(const std::vector<Evector> &s, con
     std::vector<Evector> t_slice(t_slice_start, t_slice_end);
 
     // Train
-    train_batch(s_slice, t_slice);
+    train_batch(s_slice, t_slice, false);
   }
 }
