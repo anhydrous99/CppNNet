@@ -17,6 +17,11 @@ namespace CppNNet {
 
     distr_t D;
     diff_t n = last1 - first1;
+    diff_t n2 = last2 - first2;
+
+    if (n != n2)
+      return;
+
     for (diff_t i = n - 1; i > 0; --i) {
       using std::swap;
       auto dd = D(g, param_t(0, i));
