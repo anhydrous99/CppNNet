@@ -10,17 +10,13 @@
 
 namespace CppNNet {
   template<class RandomIT, class URBG>
-  void double_shuffle(RandomIT first1, RandomIT last1, RandomIT first2, RandomIT last2, URBG &&g) {
+  void double_shuffle(RandomIT first1, RandomIT last1, RandomIT first2, URBG &&g) {
     typedef typename std::iterator_traits<RandomIT>::difference_type diff_t;
     typedef std::uniform_int_distribution<diff_t> distr_t;
     typedef typename distr_t::param_type param_t;
 
     distr_t D;
     diff_t n = last1 - first1;
-    diff_t n2 = last2 - first2;
-
-    if (n != n2)
-      return;
 
     for (diff_t i = n - 1; i > 0; --i) {
       using std::swap;
@@ -31,11 +27,11 @@ namespace CppNNet {
   }
 
   template<class RandomIT>
-  void double_shuffle(RandomIT first1, RandomIT last1, RandomIT first2, RandomIT last2) {
+  void double_shuffle(RandomIT first1, RandomIT last1, RandomIT first2) {
     std::random_device rd;
     std::mt19937 g(rd());
 
-    double_shuffle(first1, last1, first2, last2, g);
+    double_shuffle(first1, last1, first2, g);
   }
 }
 

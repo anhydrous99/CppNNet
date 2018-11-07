@@ -184,7 +184,7 @@ void CppNNet::Neural_Trainer::train_minibatch(const std::vector<Evector> &s, con
 
   // Shuffle both samples and targets
   if (shuffle)
-    double_shuffle(ss.begin(), ss.end(), tt.begin(), tt.end());
+    double_shuffle(ss.begin(), ss.end(), tt.begin());
 
   // Get begin iterator and end iterator for s
   auto s_begin(ss.cbegin());
