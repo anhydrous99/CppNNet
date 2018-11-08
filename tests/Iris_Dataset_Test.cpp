@@ -25,8 +25,7 @@ int main(int argc, char *argv[]) {
   // Import Data
   std::string path = argv[1];
   CSV_Importer imp(path, inp, out);
-  std::vector<Evector> samples = imp.GetSamples();
-  std::vector<Evector> targets = imp.GetTargets();
+  DataSet dataset = imp.GetDataSet();
 
   // Create Trainer
   Neural_Trainer trainer(layer2);
@@ -34,20 +33,22 @@ int main(int argc, char *argv[]) {
   // Train
   auto start1 = std::chrono::steady_clock::now();
   for (int i = 0, sizei = 2000; i < sizei; i++) {
-    trainer.train_batch(samples, targets);
+    trainer.train_batch(dataset.sample_training_set, dataset.target_training_set);
   }
   auto end1 = std::chrono::steady_clock::now();
 
   // Calculate error
-  float mse = layer2->mse(samples, targets);
-  float rmse = layer2->rmse(samples, targets);
-  float mae = layer2->mae(samples, targets);
-  float mpe = layer2->mpe(samples, targets);   // mpe and mape return -nan and inf
-  float mape = layer2->mape(samples, targets); //  since targets contain zeros
-  float r2 = layer2->r2_avg(samples, targets);
-  float aic = layer2->aic(samples, targets);
-  float aicc = layer2->aicc(samples, targets);
-  float bic = layer2->bic(samples, targets);
+  float mse = layer2->mse(dataset.sample_validation_set, dataset.target_validation_set);
+  float rmse = layer2->rmse(dataset.sample_validation_set, dataset.target_validation_set);
+  float mae = layer2->mae(dataset.sample_validation_set, dataset.target_validation_set);
+  float mpe = layer2->mpe(dataset.sample_validation_set,
+                          dataset.target_validation_set);   // mpe and mape return -nan and inf
+  float mape = layer2->mape(dataset.sample_validation_set,
+                            dataset.target_validation_set); //  since targets contain zeros
+  float r2 = layer2->r2_avg(dataset.sample_validation_set, dataset.target_validation_set);
+  float aic = layer2->aic(dataset.sample_training_set, dataset.target_training_set);
+  float aicc = layer2->aicc(dataset.sample_training_set, dataset.target_training_set);
+  float bic = layer2->bic(dataset.sample_training_set, dataset.target_training_set);
   auto end2 = std::chrono::steady_clock::now();
 
   std::cout << "MSE:            " << mse << std::endl;
@@ -71,7 +72,7 @@ int main(int argc, char *argv[]) {
 
   // Import network
   std::shared_ptr<Neural_Layer> network2 = exprt.readNet_endptr();
-  mse = network2->mse(samples, targets);
+  mse = network2->mse(dataset.sample_validation_set, dataset.target_validation_set);
   std::cout << "imported network MSE: " << mse << std::endl;
 
   return (0.5 < mse);

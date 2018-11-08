@@ -3,6 +3,7 @@
 #include "curl/curl.h"
 #include <iostream>
 #include <fstream>
+#include <random>
 #include <zlib.h>
 
 #if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
@@ -32,7 +33,8 @@ CppNNet::CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, 
 }
 
 CppNNet::CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, char delimiter,
-                                    bool reverse) : CSV_Importer(filename, size_of_samples, size_of_targets, delimiter) {
+                                    bool reverse) : CSV_Importer(filename, size_of_samples, size_of_targets,
+                                                                 delimiter) {
   _reverse = reverse;
 }
 
@@ -41,7 +43,8 @@ CppNNet::CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, 
 }
 
 CppNNet::CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx,
-                                    bool reverse) : CSV_Importer(filename, size_of_samples, size_of_targets, start_idx) {
+                                    bool reverse) : CSV_Importer(filename, size_of_samples, size_of_targets,
+                                                                 start_idx) {
   _reverse = reverse;
 }
 
@@ -52,8 +55,9 @@ CppNNet::CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, 
 }
 
 CppNNet::CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx,
-                                    char delimiter, bool reverse) : CSV_Importer(filename, size_of_samples, size_of_targets,
-                                                                        start_idx, delimiter) {
+                                    char delimiter, bool reverse) : CSV_Importer(filename, size_of_samples,
+                                                                                 size_of_targets,
+                                                                                 start_idx, delimiter) {
   _reverse = reverse;
 }
 
@@ -369,4 +373,36 @@ std::vector<Eigen::VectorXf> CppNNet::CSV_Importer::GetTargets() {
     }
   }
   return output;
+}
+
+CppNNet::DataSet CppNNet::CSV_Importer::GetDataSet() {
+  if (!_hasdata)
+    ObtainData();
+
+  std::random_device rd;
+  std::mt19937 g(rd());
+  std::uniform_int_distribution<unsigned long> dist;
+
+  std::vector<Eigen::VectorXf> samples = GetSamples();
+  std::vector<Eigen::VectorXf> targets = GetTargets();
+
+  unsigned long n = samples.size();
+  unsigned long k = n / _val;
+  std::vector<Eigen::VectorXf> samples_validation(samples.begin(), samples.begin() + k);
+  std::vector<Eigen::VectorXf> targets_validation(targets.begin(), targets.begin() + k);
+
+  for (unsigned long i = k; i < n; i++) {
+    unsigned long dd = dist(g, std::uniform_int_distribution<unsigned long>::param_type(0, i));
+    if (dd < k) {
+      std::swap(samples_validation[dd], samples[i]);
+      std::swap(targets_validation[dd], targets[i]);
+    }
+  }
+
+  DataSet dataSet;
+  dataSet.sample_validation_set = std::move(samples_validation);
+  dataSet.target_validation_set = std::move(targets_validation);
+  dataSet.sample_training_set = std::vector<Eigen::VectorXf>(samples.begin() + k + 1, samples.end());
+  dataSet.target_training_set = std::vector<Eigen::VectorXf>(targets.begin() + k + 1, targets.end());
+  return dataSet;
 }

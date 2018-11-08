@@ -18,6 +18,13 @@ namespace CppNNet {
     size_t size;
   };
 
+  struct DataSet {
+    std::vector<Eigen::VectorXf> sample_training_set;
+    std::vector<Eigen::VectorXf> sample_validation_set;
+    std::vector<Eigen::VectorXf> target_training_set;
+    std::vector<Eigen::VectorXf> target_validation_set;
+  };
+
   class CSV_Importer {
   private:
     std::string _filename;
@@ -27,6 +34,7 @@ namespace CppNNet {
     bool _reverse = false;
     int _sof, _sot;
     int _start_idx = 0;
+    unsigned long _val = 10;
     std::vector<std::string> _data;
 
     void ObtainData();
@@ -64,6 +72,10 @@ namespace CppNNet {
     std::vector<Eigen::VectorXf> GetSamples();
 
     std::vector<Eigen::VectorXf> GetTargets();
+
+    unsigned long &GetSetValidationPercentage() { return _val; }
+
+    DataSet GetDataSet();
   };
 
 }
