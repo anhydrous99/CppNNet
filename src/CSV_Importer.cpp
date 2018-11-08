@@ -61,6 +61,11 @@ CppNNet::CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, 
   _reverse = reverse;
 }
 
+CppNNet::CSV_Importer::CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx,
+                                    int end_idx) : CSV_Importer(filename, size_of_samples, size_of_targets, start_idx) {
+  _end_idx = end_idx;
+}
+
 CppNNet::CSV_Importer::~CSV_Importer() {
   if (_curlinit)
     curl_global_cleanup();
@@ -287,6 +292,7 @@ void CppNNet::CSV_Importer::parse(std::string &to_parse) {
   while (getline(stream1, line)) {
     i++;
     if (i - 1 < _start_idx) continue;
+    if (i - 1 > _end_idx) continue;
 
     std::stringstream ss(line);
     while (std::getline(ss, tmp, _delim)) {

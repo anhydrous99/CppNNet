@@ -34,6 +34,7 @@ namespace CppNNet {
     bool _reverse = false;
     int _sof, _sot;
     int _start_idx = 0;
+    int _end_idx = std::numeric_limits<int>::max();
     unsigned long _val = 10;
     std::vector<std::string> _data;
 
@@ -64,6 +65,8 @@ namespace CppNNet {
 
     CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx, char delimiter,
                  bool reverse);
+
+    CSV_Importer(std::string &filename, int size_of_samples, int size_of_targets, int start_idx, int end_idx);
 
     ~CSV_Importer();
 
