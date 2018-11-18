@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.9)
 
 if (POLICY CMP0054)
     cmake_policy(SET CMP0054 NEW)
@@ -9,8 +9,8 @@ endif ()
 
 include("cmake/HunterGate.cmake")
 HunterGate(
-        URL "https://github.com/ruslo/hunter/archive/v0.23.44.tar.gz"
-        SHA1 "c4cfcc0cd39fdae8de08f6205b7f34cab4a7ba79"
+        URL "https://s3.amazonaws.com/files.themadphysicist.com/hunter-0.23.48.tar.gz"
+        SHA1 "32710f444638f25aa0a5aa26baef1284a69a1eca"
 )
 
 project(CppNNet)
@@ -21,6 +21,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif (NOT CMAKE_BUILD_TYPE)
 
 option(BUILD_TEST "Build the Tests" ON)
+option(USE_CUDA "Build Cuda Components" ON)
 
 #set(CMAKE_CXX_FLAGS_RELEASE "-g ${CMAKE_CXX_FLAGS_RELEASE}")
 
@@ -32,8 +33,20 @@ find_package(ZLIB CONFIG REQUIRED)
 find_package(Eigen3 CONFIG REQUIRED)
 find_package(CURL CONFIG REQUIRED)
 find_package(RapidJSON CONFIG REQUIRED)
-
 find_package(OpenMP REQUIRED)
+
+if (USE_CUDA)
+    include(CheckLanguage)
+    check_language(CUDA)
+    if (CMAKE_CUDA_COMPILER)
+        enable_language(CUDA)
+        set(hasCUDA TRUE)
+        if (NOT DEFINED CMAKE_CUDA_STANDARD)
+            set(CMAKE_CUDA_STANDARD 11)
+            set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+        endif ()
+    endif ()
+endif ()
 
 include_directories(include)
 
