@@ -30,3 +30,18 @@ CppNNet::CUDA_Neural_Trainer::CUDA_Neural_Trainer(std::shared_ptr<Neural_Layer> 
 void throw_error(std::string error_string) {
   throw new std::runtime_error(error_string + "\n");
 }
+
+void CppNNet::CUDA_Neural_Trainer::train_minibatch(const std::vector<CppNNet::Evector> &s,
+                                                   const std::vector<CppNNet::Evector> &t, unsigned long batch_size,
+                                                   bool shuffle) {
+  cumatrix<float> sample_Mat(static_cast<int>(s.size()), s[0].size());
+  for (int i = 0; i < sample_Mat.rows(); i++) {
+    for (int j = 0; j < sample_Mat.cols(); j++)
+      sample_Mat(i, j) = s[i][j];
+  }
+  cumatrix<float> target_Mat(static_cast<int>(s.size()), s[0].size());
+  for (int i = 0; i < target_Mat.rows(); i++) {
+    for (int j = 0; j < target_Mat.cols(); j++)
+      sample_Mat(i, j) = s[i][j];
+  }
+}

@@ -25,16 +25,14 @@ struct cuarray {
     elemns = new T[N];
   }
 
-  HOSTDEVICE cuarray(pointer data, bool do_delete = true) {
+  HOSTDEVICE cuarray(pointer &data, bool do_delete = true) {
     elemns = data;
     dodelete = do_delete;
   }
 
   HOSTDEVICE ~cuarray() {
-    if (dodelete) {
-      delete[] elemns;
-      if (in_device) gpuErrchk(cudaFree(d_elemns));
-    }
+    if (dodelete) delete[] elemns;
+    if (in_device) gpuErrchk(cudaFree(d_elemns));
   }
 
   // iterators
@@ -71,11 +69,13 @@ struct cuarray {
   HOSTDEVICE const value_type *cdata() const noexcept { return elemns; }
 
   __host__ pointer get_device_pointer() {
-    pointer d_t;
-    gpuErrchk(cudaMalloc((void **) &d_t, N * sizeof(value_type)));
-    gpuErrchk(cudaMemcpy(d_t, elemns, N * sizeof(value_type), cudaMemcpyHostToDevice));
-    in_device = true;
-    d_elemns = d_t;
+    pointer d_t = nullptr;
+    if (!in_device) {
+      gpuErrchk(cudaMalloc((void **) &d_t, N * sizeof(value_type)));
+      gpuErrchk(cudaMemcpy(d_t, elemns, N * sizeof(value_type), cudaMemcpyHostToDevice));
+      in_device = true;
+      d_elemns = d_t;
+    }
     return d_t;
   }
 
