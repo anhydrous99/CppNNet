@@ -1,4 +1,6 @@
 #include "CUDA_Neural_Trainer.h"
+#include "cuarray.cuh"
+#include "cumatrix.cuh"
 
 CppNNet::CUDA_Neural_Trainer::CUDA_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptrs) {
   _neur_ptrs = neural_ptrs;
