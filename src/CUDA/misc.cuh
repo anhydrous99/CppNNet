@@ -24,14 +24,20 @@
 
 #endif // __JETBRAINS_IDE__
 
+#include <vector>
+#include <Eigen/Core>
 #include <cuda_runtime.h>
+
+typedef Eigen::MatrixXf Ematrix;
+typedef Eigen::VectorXf Evector;
+typedef Eigen::Map<Eigen::MatrixXf> Ematrixmap;
+typedef Eigen::Map<Eigen::VectorXf> Evectormap;
 
 #define HOSTDEVICE __host__ __device__
 
 #include <stdio.h>
 
-#define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
-
+#define cudaerrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort = true) {
   if (code != cudaSuccess) {
     fprintf(stderr, "Error: %s %s %d\n", cudaGetErrorString(code), file, line);

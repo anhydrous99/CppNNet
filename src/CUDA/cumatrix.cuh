@@ -1,135 +1,105 @@
+//
+// Created by Armando Herrera on 11/20/2018.
+//
+
 #ifndef CPPNNET_CUMATRIX_CUH
 #define CPPNNET_CUMATRIX_CUH
 
 #include "misc.cuh"
 
-template<class T, int N, int M>
-struct cumatrix {
+template<class T>
+class cumatrix {
   // types:
-  typedef cumatrix self;
-  typedef self &selfref;
+  typedef T &reference;
+  typedef const T &const_reference;
+  typedef size_t size_type;
   typedef T value_type;
-  typedef value_type &reference;
-  typedef const value_type &const_reference;
-  typedef value_type *iterator;
-  typedef const value_type *const_iterator;
-  typedef int size_type;
-  typedef value_type *pointer;
-  typedef const value_type *const_pointer;
+  typedef T *pointer;
+  typedef const T *const_pointer;
 
+  // data:
+  size_type N, M;
   pointer elemns;
   pointer d_elemns;
   bool in_device = false;
-  bool dodelete = true;
 
-  // Constructor & Destructor
-  HOSTDEVICE cumatrix() {
+public:
+  // Constructor & Desctructor
+  HOSTDEVICE cumatrix(size_type n, size_type m) {
+    elemns = new T[n * m];
+    N = n;
+    M = m;
+  }
+
+  HOSTDEVICE cumatrix(std::vector<Evector> cont) {
+    N = cont.size();
+    M = cont[0].size();
     elemns = new T[N * M];
   }
 
-  HOSTDEVICE cumatrix(pointer data, bool do_delete = true) {
-    elemns = data;
-    dodelete = do_delete;
-  }
-
   HOSTDEVICE ~cumatrix() {
-    if (dodelete) {
-      delete[] elemns;
-      if (in_device) gpuErrchk(cudaFree(d_elemns));
-    }
+    delete[] elemns;
+    if (in_device) release_device_data();
   }
 
-  // iterators
-  HOSTDEVICE iterator begin() noexcept { return iterator(data()); }
+  // capacity:
+  HOSTDEVICE constexpr size_type size() const { return N * M; }
 
-  HOSTDEVICE const_iterator cbegin() const noexcept { return const_iterator(data()); }
+  HOSTDEVICE constexpr size_type rows() const { return N; }
 
-  HOSTDEVICE iterator end() noexcept { return iterator(data() + N); }
-
-  HOSTDEVICE const_iterator cend() const noexcept { return const_iterator(data() + N); }
-
-  // Capacity
-  HOSTDEVICE constexpr size_type size() const noexcept { return (N * M); }
-
-  HOSTDEVICE constexpr size_type max_size() const noexcept { return (N * M); }
-
-  HOSTDEVICE constexpr size_type rows() const noexcept { return N; }
-
-  HOSTDEVICE constexpr size_type cols() const noexcept { return M; }
+  HOSTDEVICE constexpr size_type cols() const { return M; }
 
   // element access:
-  HOSTDEVICE reference operator[](size_type n) { return elemns[n]; }
+  HOSTDEVICE reference operator[](size_type i) { return elemns[i]; }
+
+  HOSTDEVICE const_reference operator[](size_type i) const { return elemns[i]; }
 
   HOSTDEVICE reference operator()(size_type x, size_type y) { return elemns[x * M + y]; }
 
-  HOSTDEVICE reference at(size_type n) { return elemns[n]; }
+  HOSTDEVICE const_reference operator()(size_type x, size_type y) const { return elemns[x * M + y]; }
 
-  HOSTDEVICE const_reference cat(size_type n) const { return elemns[n]; }
+  HOSTDEVICE reference at(size_type i) { return elemns[i]; }
+
+  HOSTDEVICE const_pointer cat(size_type i) const { return elemns[i]; }
 
   HOSTDEVICE reference at(size_type x, size_type y) { return elemns[x * M + y]; }
 
   HOSTDEVICE const_reference cat(size_type x, size_type y) const { return elemns[x * M + y]; }
 
-  HOSTDEVICE reference front() { return elemns[0]; }
+  // direct access:
+  HOSTDEVICE pointer data() { return elemns; }
 
-  HOSTDEVICE const_reference cfront() const { return elemns[0]; }
+  HOSTDEVICE const_pointer cdata() { return elemns; }
 
-  HOSTDEVICE reference back() { return elemns[N - 1]; }
-
-  HOSTDEVICE const_reference cback() const { return elemns[N - 1]; }
-
-  HOSTDEVICE value_type *data() noexcept { return elemns; }
-
-  HOSTDEVICE const value_type *cdata() const noexcept { return elemns; }
-
-  // Operators
-  HOSTDEVICE selfref operator+=(self x) {
-    for (int i = 0; i < size(); i++)
-      at(i) += x[i];
+  // CONVERTED ACCESS:
+  HOSTDEVICE Evectormap get_eigen_vector(size_type i) {
+    return Evectormap(elemns[i * M], M);
   }
 
-  HOSTDEVICE selfref operator-=(self x) {
-    for (int i = 0; i < size(); i++)
-      at(i) -= x[i];
-  }
-
-  __host__ pointer get_device_pointer() {
-    pointer d_t;
-    gpuErrchk(cudaMalloc((void **) &d_t, N * M * sizeof(value_type)));
-    gpuErrchk(cudaMemcpy(d_t, elemns, N * M * sizeof(value_type), cudaMemcpyHostToDevice));
-    in_device = true;
-    d_elemns = d_t;
-    return d_t;
+  // CUDA functions:
+  __host__ pointer get_device_pointer(bool copy = true) {
+    if (!in_device) {
+      cudaerrchk(cudaMalloc((void **) &d_elemns, sizeof(T) * N * M));
+      if (copy) cudaerrchk(cudaMemcpy(d_elemns, elemns, sizeof(T) * N * M, cudaMemcpyHostToDevice));
+      in_device = true;
+    }
+    return d_elemns;
   }
 
   __host__ void refresh_from_device() {
-    if (in_device) gpuErrchk(cudaMemcpy(elemns, d_elemns, N * M * sizeof(value_type), cudaMemcpyDeviceToHost));
+    if (in_device) cudaerrchk(cudaMemcpy(elemns, d_elemns, sizeof(T) * N * M, cudaMemcpyDeviceToHost));
   }
 
   __host__ void refresh_to_device() {
-    if (in_device) gpuErrchk(cudaMemcpy(d_elemns, elemns, N * M * sizeof(value_type), cudaMemcpyHostToDevice));
+    if (in_device) cudaerrchk(cudaMemcpy(d_elemns, elemns, sizeof(T) * N * M, cudaMemcpyHostToDevice));
   }
 
-  __host__ void delete_device_data() {
-    if (in_device) gpuErrchk(cudaFree(d_elemns));
+  __host__ void release_device_data() {
+    if (in_device) {
+      cudaerrchk(cudaFree(d_elemns));
+      in_device = false;
+    }
   }
 };
-
-// Element Wise Operators
-template<class T, int N, int M>
-HOSTDEVICE cumatrix<T, N, M> operator+(cumatrix<T, N, M> a, cumatrix<T, N, M> b) {
-  cumatrix<T, N, M> output;
-  for (int i = 0, s = a.size(); i < s; i++)
-    output[i] = a[i] + b[i];
-  return output;
-}
-
-template<class T, int N, int M>
-HOSTDEVICE cumatrix<T, N, M> operator-(cumatrix<T, N, M> a, cumatrix<T, N, M> b) {
-  cumatrix<T, N, M> output;
-  for (int i = 0, s = a.size(); i < s; i++)
-    output[i] = a[i] - b[i];
-  return output;
-}
 
 #endif // CPPNNET_CUMATRIX_CUH
