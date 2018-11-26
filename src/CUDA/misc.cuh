@@ -45,4 +45,14 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort =
   }
 }
 
+struct kernel_parameters {
+  int nnlayers;
+  int niterations;
+  int nsamtar;
+
+};
+
+__global__ void BackProp(float *weights, float *biases, float *samples, float *targets, float *senTa, float *sen,
+                         int *dim, kernel_parameters params);
+
 #endif // CPPNNET_MISC_CUH

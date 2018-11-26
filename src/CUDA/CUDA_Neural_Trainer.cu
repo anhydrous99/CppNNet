@@ -55,6 +55,40 @@ void CppNNet::CUDA_Neural_Trainer::train_minibatch(const std::vector<CppNNet::Ev
   if (shuffle)
     double_shuffle(ss.begin(), ss.end(), tt.begin());
 
+  // Put samples in cumatrix object
   cumatrix<float> Sample_Matrix(ss);
   cumatrix<float> Target_Matrix(tt);
-}
+
+  // Get Device Pointers
+  float *d_weights, *d_biases;
+  network.get_device_pointers(d_weights, d_biases);
+  float *d_samples = Sample_Matrix.get_device_pointer();
+  float *d_targets = Target_Matrix.get_device_pointer();
+  int *d_dims = network.get_dim_array_dev_ptr();
+
+  // Create Output Sensitivity objects
+  cuNetwork<float> sensi(network.N_layers(), network.Get_Dims_ptr());
+  float *d_senTa, *d_sen;
+  sensi.get_device_pointers(d_senTa, d_sen, false);
+
+  kernel_parameters params = {
+      network.N_layers(),
+      n_iterations,
+      Sample_Matrix.rows()
+  };
+
+  BackProp << < 1, 1 >> > (d_weights, d_biases, d_samples, d_targets, d_senTa, d_sen, d_dims, params);
+
+  // Get Calculated Sensitivity
+  sensi.refresh_weights_from_device();
+  sensi.refresh_biases_from_device();
+
+  // Calculate New Weights
+  /// TODO
+
+  // Release device memory
+  sensi.release_device_data();
+  network.release_device_data();
+  Sample_Matrix.release_device_data();
+  Target_Matrix.release_device_data();
+};

@@ -13,7 +13,7 @@ class cuNetwork {
   // types:
   typedef T &reference;
   typedef const T &const_reference;
-  typedef size_t size_type;
+  typedef int size_type;
   typedef T value_type;
   typedef T *pointer;
   typedef const T *const_pointer;
@@ -27,7 +27,9 @@ class cuNetwork {
   pointer biases;
   pointer d_weights;
   pointer d_biases;
+  size_type *d_dim;
   bool in_device = false;
+  bool dim_in_device = false;
 
 public:
   // constructors
@@ -201,6 +203,13 @@ public:
     in_device = true;
   }
 
+  __host__ size_type *get_dim_array_dev_ptr() {
+    cudaerrchk(cudaMalloc((void **) &d_dim, sizeof(size_type) * nnlayers * 2));
+    cudaerrchk(cudaMemcpy(d_dim, dim, sizeof(size_type) * nnlayers * 2, cudaMemcpyHostToDevice));
+    dim_in_device = true;
+    return d_dim;
+  }
+
   __host__ void refresh_weights_from_device() {
     cudaerrchk(cudaMemcpy(weights, d_weights, sizeof(T) * nweights, cudaMemcpyDeviceToHost));
   }
@@ -222,6 +231,10 @@ public:
       cudaerrchk(cudaFree(d_weights));
       cudaerrchk(cudaFree(d_biases));
       in_device = false;
+    }
+    if (dim_in_device) {
+      cudaerrchk(cudaFree(d_dim));
+      dim_in_device = false;
     }
   }
 

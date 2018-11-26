@@ -12,7 +12,7 @@ class cumatrix {
   // types:
   typedef T &reference;
   typedef const T &const_reference;
-  typedef size_t size_type;
+  typedef int size_type;
   typedef T value_type;
   typedef T *pointer;
   typedef const T *const_pointer;
