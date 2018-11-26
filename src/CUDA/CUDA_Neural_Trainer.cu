@@ -1,6 +1,7 @@
 #include "CUDA_Neural_Trainer.h"
-#include "cuarray.cuh"
-#include "cumatrix.cuh"
+#include "misc.cuh"
+#include "util.h"
+#include "cuNetwork.cuh"
 
 CppNNet::CUDA_Neural_Trainer::CUDA_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptrs) {
   _neur_ptrs = neural_ptrs;
@@ -34,14 +35,22 @@ void throw_error(std::string error_string) {
 void CppNNet::CUDA_Neural_Trainer::train_minibatch(const std::vector<CppNNet::Evector> &s,
                                                    const std::vector<CppNNet::Evector> &t, unsigned long batch_size,
                                                    bool shuffle) {
-  cumatrix<float> sample_Mat(static_cast<int>(s.size()), s[0].size());
-  for (int i = 0; i < sample_Mat.rows(); i++) {
-    for (int j = 0; j < sample_Mat.cols(); j++)
-      sample_Mat(i, j) = s[i][j];
+  auto n_iterations = (int) std::floor((double) ss.size() / (double) batch_size);
+
+  // Push Weights and Biases to cuNetwork object
+  std::vector<Ematrix> Weights_vec;
+  std::vector<Evector> Biases_vec;
+  for (int i = 0; i < _neur_ptrs.size(); i++) {
+    Weights_vec.push_back(_neur_ptrs[m]->_w);
+    Biases_vec.push_back(_neur_ptrs[m]->_b);
   }
-  cumatrix<float> target_Mat(static_cast<int>(s.size()), s[0].size());
-  for (int i = 0; i < target_Mat.rows(); i++) {
-    for (int j = 0; j < target_Mat.cols(); j++)
-      sample_Mat(i, j) = s[i][j];
-  }
+  cuNetwork net(Weights_vec, Biases_vec);
+
+  // Copy samples to shuffle
+  std::vector<Evector> ss = s;
+  std::vector<Evector> tt = t;
+
+  // Shuffle samples
+  if (shuffle)
+    double_shuffle(ss.begin(), ss.end(), tt.begin());
 }
