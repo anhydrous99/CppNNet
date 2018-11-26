@@ -31,7 +31,8 @@ class cuNetwork {
 
 public:
   // constructors
-  __host__ cuNetwork(std::vector<Eigen::MatrixXf> Weights, std::vector<Eigen::VectorXf> Biases) {
+  __host__ cuNetwork(std::vector<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>> Weights,
+                     std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> Biases) {
     nnlayers = Weights.size();
     dim = new size_type[nnlayers * 2];
     for (size_type i = 0; i < nnlayers; i++) {
