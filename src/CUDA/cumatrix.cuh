@@ -31,15 +31,23 @@ public:
     M = m;
   }
 
-  HOSTDEVICE cumatrix(std::vector<Evector> cont) {
+  __host__ cumatrix(std::vector<Eigen::Matrix<T, Eigen::Dynamic, 1>> cont) {
     N = cont.size();
     M = cont[0].size();
     elemns = new T[N * M];
   }
 
+  HOSTDEVICE cumatrix(pointer data_ptr, size_type n, size_type m) {
+    elemns = data_ptr;
+    N = n;
+    M = m;
+  }
+
   HOSTDEVICE ~cumatrix() {
     delete[] elemns;
+#ifndef __CUDA_ARCH__
     if (in_device) release_device_data();
+#endif
   }
 
   // capacity:

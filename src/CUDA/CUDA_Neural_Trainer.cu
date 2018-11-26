@@ -54,4 +54,7 @@ void CppNNet::CUDA_Neural_Trainer::train_minibatch(const std::vector<CppNNet::Ev
   // Shuffle samples
   if (shuffle)
     double_shuffle(ss.begin(), ss.end(), tt.begin());
+
+  cumatrix<float> Sample_Matrix(ss);
+  cumatrix<float> Target_Matrix(tt);
 }
