@@ -2,6 +2,7 @@
 #include "misc.cuh"
 #include "util.h"
 #include "cuNetwork.cuh"
+#include "cumatrix.cuh"
 
 CppNNet::CUDA_Neural_Trainer::CUDA_Neural_Trainer(std::vector<std::shared_ptr<Neural_Layer>> neural_ptrs) {
   _neur_ptrs = neural_ptrs;
@@ -35,16 +36,16 @@ void throw_error(std::string error_string) {
 void CppNNet::CUDA_Neural_Trainer::train_minibatch(const std::vector<CppNNet::Evector> &s,
                                                    const std::vector<CppNNet::Evector> &t, unsigned long batch_size,
                                                    bool shuffle) {
-  auto n_iterations = (int) std::floor((double) ss.size() / (double) batch_size);
+  auto n_iterations = (int) std::floor((double) s.size() / (double) batch_size);
 
   // Push Weights and Biases to cuNetwork object
   std::vector<Ematrix> Weights_vec;
   std::vector<Evector> Biases_vec;
-  for (int i = 0; i < _neur_ptrs.size(); i++) {
+  for (int m = 0; m < _neur_ptrs.size(); m++) {
     Weights_vec.push_back(_neur_ptrs[m]->_w);
     Biases_vec.push_back(_neur_ptrs[m]->_b);
   }
-  cuNetwork net(Weights_vec, Biases_vec);
+  cuNetwork<float> network(Weights_vec, Biases_vec);
 
   // Copy samples to shuffle
   std::vector<Evector> ss = s;

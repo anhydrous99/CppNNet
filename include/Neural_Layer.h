@@ -137,6 +137,8 @@ namespace CppNNet {
     friend class Neural_Trainer;
 
     friend class MSGD_Neural_Trainer;
+
+    friend class CUDA_Neural_Trainer;
   };
 
 }

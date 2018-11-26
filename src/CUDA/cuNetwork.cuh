@@ -31,9 +31,9 @@ class cuNetwork {
 
 public:
   // constructors
-  HOSTDEVICE cuNetwork(std::vector<Eigen::MatrixXf> Weights, std::vector<Eigen::VectorXf> Biases) {
+  __host__ cuNetwork(std::vector<Eigen::MatrixXf> Weights, std::vector<Eigen::VectorXf> Biases) {
     nnlayers = Weights.size();
-    dim = T[nnlayers * 2];
+    dim = new size_type[nnlayers * 2];
     for (size_type i = 0; i < nnlayers; i++) {
       dim[i * 2] = Weights[i].rows();
       dim[i * 2 + 1] = Weights[i].cols();
@@ -47,7 +47,7 @@ public:
     }
 
     weights = new T[nweights];
-    biases = new T[biases];
+    biases = new T[nbiases];
     size_type weightn = 0;
     size_type biasesn = 0;
     for (size_type m = 0; m < nnlayers; m++) {
@@ -79,7 +79,9 @@ public:
     delete[] dim;
     delete[] weights;
     delete[] biases;
+#ifndef __CUDA_ARCH__
     if (in_device) release_device_data();
+#endif
   }
 
   // capacity
@@ -216,4 +218,4 @@ private:
   }
 };
 
-#define // CPPNNET_CUNETWORK_CUH
+#endif // CPPNNET_CUNETWORK_CUH
