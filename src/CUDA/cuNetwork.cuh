@@ -76,6 +76,19 @@ public:
     }
   }
 
+  HOSTDEVICE cuNetwork(size_type nn_layers, size_type *dims) {
+    nnlayers = nn_layers;
+    dim = dims;
+    nweights = 0;
+    nbiases = 0;
+    for (size_type i = 0; i < nnlayers; i++) {
+      nweights += dim[i * 2] * dim[i * 2 + 1];
+      nbiases += dim[i * 2];
+    }
+    weights = new T[nweights];
+    biases = new T[nbiases];
+  }
+
   HOSTDEVICE ~cuNetwork() {
     delete[] dim;
     delete[] weights;
@@ -125,6 +138,10 @@ public:
   HOSTDEVICE size_type weights_rows(size_type m) const { return dim[m * 2]; }
 
   HOSTDEVICE size_type weights_cols(size_type m) const { return dim[m * 2 + 1]; }
+
+  HOSTDEVICE size_type N_layers() { return nnlayers; }
+
+  HOSTDEVICE size_type *Get_Dims_ptr() { return dim; }
 
   // element access:
   HOSTDEVICE reference operator()(size_type m, size_type i, size_type j) { return weights_accessor(m, i, j); }
