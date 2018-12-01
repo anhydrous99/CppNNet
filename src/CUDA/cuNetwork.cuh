@@ -238,6 +238,19 @@ public:
     }
   }
 
+  __host__ void update_weights(cuNetwork &sen_network) {
+    for (size_type m = 0; m < nnlayers; m++) {
+      size_type rows = weights_rows(m),
+      cols = weights_cols(m);
+
+      for (size_type i = 0; i < rows; i++) {
+        for (size_type j = 0; j < cols; j++)
+          get_weight(m, i, j) -= sen_network.get_weight(m, i, j);
+        get_bias(m, i) -= sen_network.get_bias(m, i);
+      }
+    }
+  }
+
   // utility functions
 private:
   HOSTDEVICE inline reference weights_accessor(size_type layer, size_type i, size_type j) {

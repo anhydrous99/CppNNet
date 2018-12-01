@@ -77,6 +77,7 @@ void CppNNet::CUDA_Neural_Trainer::train_minibatch(const std::vector<CppNNet::Ev
       Sample_Matrix.rows()
   };
 
+  // Run kernel to calculate Sensitivities on Device
   BackProp << < 1, 1 >> > (d_weights, d_biases, d_samples, d_targets, d_senTa, d_sen, d_dims, params);
 
   // Get Calculated Sensitivity
@@ -84,7 +85,7 @@ void CppNNet::CUDA_Neural_Trainer::train_minibatch(const std::vector<CppNNet::Ev
   sensi.refresh_biases_from_device();
 
   // Calculate New Weights
-  /// TODO
+  network.update_weights(sensi);
 
   // Release device memory
   sensi.release_device_data();
