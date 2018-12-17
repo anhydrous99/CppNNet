@@ -1,13 +1,17 @@
+//
+// Created by Armando Herrera on 11/18/18.
+//
+
 #include "Normalizer.h"
 #include "Neural_Layer.h"
-#include "Neural_Trainer.h"
 #include "CSV_Importer.h"
+#include "CUDA_Neural_Trainer.h"
 #include <iostream>
 #include <chrono>
 
 using namespace CppNNet;
 
-int main(int argc, char *argv[]) {
+int main() {
   // Number of inputs
   int inp = 10;
   // Number of outputs
@@ -28,13 +32,13 @@ int main(int argc, char *argv[]) {
   std::vector<Evector> normed_samples = samplen.get_batch_norm(samples);
 
   // Create Trainer
-  Neural_Trainer trainer(layer2);
+  CUDA_Neural_Trainer trainer(layer2);
 
   // Train
   std::cout << "Starting to Train" << std::endl;
   auto start1 = std::chrono::steady_clock::now();
-  for (int i = 0, sizei = 100; i < sizei; i++) {
-    trainer.train_minibatch(normed_samples, targets, 1000);
+  for (int i = 0, sizei = 1; i < sizei; i++) {
+    trainer.train_perminibatch(normed_samples, targets, 1000);
   }
   auto end1 = std::chrono::steady_clock::now();
 
@@ -65,4 +69,3 @@ int main(int argc, char *argv[]) {
   std::cout << "Statistics took " << std::chrono::duration_cast<std::chrono::milliseconds>(end2 - end1).count()
             << " milliseconds" << std::endl;
   return (0.5 < mse);
-}
