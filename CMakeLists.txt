@@ -28,10 +28,12 @@ hunter_add_package(ZLIB)
 hunter_add_package(Eigen)
 hunter_add_package(CURL)
 hunter_add_package(RapidJSON)
+hunter_add_package(SDL_mixer)
 find_package(ZLIB CONFIG REQUIRED)
 find_package(Eigen3 CONFIG REQUIRED)
 find_package(CURL CONFIG REQUIRED)
 find_package(RapidJSON CONFIG REQUIRED)
+find_package(SDL_mixer CONFIG REQUIRED)
 
 find_package(OpenMP REQUIRED)
 
