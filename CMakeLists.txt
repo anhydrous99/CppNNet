@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 3.9)
 
 if (POLICY CMP0054)
     cmake_policy(SET CMP0054 NEW)
@@ -21,6 +21,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif (NOT CMAKE_BUILD_TYPE)
 
 option(BUILD_TEST "Build the Tests" ON)
+option(USE_CUDA "Build Cuda Components" ON)
 
 #set(CMAKE_CXX_FLAGS_RELEASE "-g ${CMAKE_CXX_FLAGS_RELEASE}")
 
@@ -32,8 +33,20 @@ find_package(ZLIB CONFIG REQUIRED)
 find_package(Eigen3 CONFIG REQUIRED)
 find_package(CURL CONFIG REQUIRED)
 find_package(RapidJSON CONFIG REQUIRED)
-
 find_package(OpenMP REQUIRED)
+
+if (USE_CUDA)
+    include(CheckLanguage)
+    check_language(CUDA)
+    if (CMAKE_CUDA_COMPILER)
+        enable_language(CUDA)
+        set(hasCUDA TRUE)
+        if (NOT DEFINED CMAKE_CUDA_STANDARD)
+            set(CMAKE_CUDA_STANDARD 11)
+            set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+        endif ()
+    endif ()
+endif ()
 
 include_directories(include)
 

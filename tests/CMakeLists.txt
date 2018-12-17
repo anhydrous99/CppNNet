@@ -34,3 +34,7 @@ add_test(NAME IrisDatasetGZTest COMMAND Iris_Dataset_Test ${CMAKE_SOURCE_DIR}/tr
 
 add_executable(HIGGS HIGGS.cpp)
 target_link_libraries(HIGGS CppNNet)
+
+add_executable(CUDA_MAGIC_TEST CUDA_MAGIC_Net_Test.cpp)
+target_link_libraries(CUDA_MAGIC_TEST CppNNet)
+add_test(NAME CUDA_MAGIC_TEST COMMAND CUDA_MAGIC_TEST)
