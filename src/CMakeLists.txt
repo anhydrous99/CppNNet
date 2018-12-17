@@ -26,4 +26,5 @@ target_link_libraries(CppNNet
         CURL::libcurl
         ZLIB::zlib
         RapidJSON::rapidjson
+        SDL_mixer::SDL_mixer
         )
