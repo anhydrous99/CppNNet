@@ -159,9 +159,9 @@ void CppNNet::Neural_Trainer::train_batch(const std::vector<Evector> &s, const s
     }
   }
 
+  float aq = _learning_rate / Q;
   for (unsigned long m = 0; m < M; m++) {
     std::shared_ptr<Neural_Layer> current_ptr = _neur_ptrs[m];
-    float aq = _learning_rate / Q;
 #pragma omp critical (sgd_train_batch)
     {
       // Calculate new weights

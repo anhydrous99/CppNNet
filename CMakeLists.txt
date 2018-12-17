@@ -9,8 +9,8 @@ endif ()
 
 include("cmake/HunterGate.cmake")
 HunterGate(
-        URL "https://s3.amazonaws.com/files.themadphysicist.com/hunter-0.23.48.tar.gz"
-        SHA1 "32710f444638f25aa0a5aa26baef1284a69a1eca"
+        URL "https://github.com/ruslo/hunter/archive/v0.23.74.tar.gz"
+        SHA1 "fc061118c0e94ae2dea28f07e3842ce9aeb7332e"
 )
 
 project(CppNNet)
